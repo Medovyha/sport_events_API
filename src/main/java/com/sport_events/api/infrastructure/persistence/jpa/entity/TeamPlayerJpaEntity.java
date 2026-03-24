@@ -2,17 +2,27 @@ package com.sport_events.api.infrastructure.persistence.jpa.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "team_players")
+@Table(
+	name = "team_players",
+	uniqueConstraints = @UniqueConstraint(
+		name = "team_players_team_id_player_id_uindex",
+		columnNames = {"team_id", "player_id"}
+	)
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,9 +34,11 @@ public class TeamPlayerJpaEntity {
 	@Column(name = "team_player_id", nullable = false)
 	private Integer teamPlayerId;
 
-	@Column(name = "team_id", nullable = false)
-	private Integer teamId;
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "team_id", nullable = false)
+	private TeamJpaEntity team;
 
-	@Column(name = "player_id", nullable = false)
-	private Integer playerId;
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "player_id", nullable = false)
+	private PlayerJpaEntity player;
 }

@@ -11,7 +11,7 @@ import com.sport_events.api.infrastructure.persistence.jpa.entity.EventPlayerJpa
 @Repository
 public interface EventPlayerJpaRepository extends JpaRepository<EventPlayerJpaEntity, Integer> {
 
-	List<EventPlayerJpaEntity> findByEventTeamId(Integer eventTeamId);
+	List<EventPlayerJpaEntity> findByEventTeam_EventTeamsId(Integer eventTeamId);
 
-	Optional<EventPlayerJpaEntity> findByEventTeamIdAndPlayerId(Integer eventTeamId, Integer playerId);
+	Optional<EventPlayerJpaEntity> findByEventTeam_EventTeamsIdAndPlayer_PlayerId(Integer eventTeamId, Integer playerId);
 }

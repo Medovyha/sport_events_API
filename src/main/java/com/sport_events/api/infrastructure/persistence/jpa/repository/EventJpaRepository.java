@@ -11,7 +11,7 @@ import com.sport_events.api.infrastructure.persistence.jpa.entity.EventJpaEntity
 @Repository
 public interface EventJpaRepository extends JpaRepository<EventJpaEntity, Long> {
 
-	List<EventJpaEntity> findByVenueId(Integer venueId);
+	List<EventJpaEntity> findByVenue_VenueId(Integer venueId);
 
 	List<EventJpaEntity> findByStartsAtBetween(OffsetDateTime from, OffsetDateTime to);
 }

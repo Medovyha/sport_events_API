@@ -11,7 +11,7 @@ import com.sport_events.api.infrastructure.persistence.jpa.entity.EventTeamJpaEn
 @Repository
 public interface EventTeamJpaRepository extends JpaRepository<EventTeamJpaEntity, Integer> {
 
-	List<EventTeamJpaEntity> findByEventId(Long eventId);
+	List<EventTeamJpaEntity> findByEvent_EventId(Long eventId);
 
-	Optional<EventTeamJpaEntity> findByEventIdAndTeamId(Long eventId, Integer teamId);
+	Optional<EventTeamJpaEntity> findByEvent_EventIdAndTeam_TeamId(Long eventId, Integer teamId);
 }

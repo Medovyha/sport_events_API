@@ -2,17 +2,27 @@ package com.sport_events.api.infrastructure.persistence.jpa.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "sport_translations")
+@Table(
+	name = "sport_translations",
+	uniqueConstraints = @UniqueConstraint(
+		name = "sport_translations_sport_id_language_id_uindex",
+		columnNames = {"sport_id", "language_id"}
+	)
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,11 +34,13 @@ public class SportTranslationJpaEntity {
 	@Column(name = "sport_translation_id", nullable = false)
 	private Integer sportTranslationId;
 
-	@Column(name = "sport_id", nullable = false)
-	private Integer sportId;
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "sport_id", nullable = false)
+	private SportJpaEntity sport;
 
-	@Column(name = "language_id", nullable = false)
-	private Integer languageId;
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "language_id", nullable = false)
+	private LanguageJpaEntity language;
 
 	@Column(name = "name", nullable = false, length = 255)
 	private String name;

@@ -1,10 +1,14 @@
 package com.sport_events.api.infrastructure.persistence.jpa.entity;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -29,4 +33,10 @@ public class LanguageJpaEntity {
 
 	@Column(name = "name", nullable = false, length = 50)
 	private String name;
+
+	@OneToMany(mappedBy = "language")
+	private Set<EventTranslationJpaEntity> eventTranslations = new LinkedHashSet<>();
+
+	@OneToMany(mappedBy = "language")
+	private Set<SportTranslationJpaEntity> sportTranslations = new LinkedHashSet<>();
 }

@@ -1,12 +1,18 @@
 package com.sport_events.api.infrastructure.persistence.jpa.entity;
 
 import java.time.OffsetDateTime;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -29,6 +35,13 @@ public class EventJpaEntity {
 	@Column(name = "starts_at", nullable = false)
 	private OffsetDateTime startsAt;
 
-	@Column(name = "venue_id", nullable = false)
-	private Integer venueId;
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "venue_id", nullable = false)
+	private VenueJpaEntity venue;
+
+	@OneToMany(mappedBy = "event")
+	private Set<EventTeamJpaEntity> eventTeams = new LinkedHashSet<>();
+
+	@OneToMany(mappedBy = "event")
+	private Set<EventTranslationJpaEntity> translations = new LinkedHashSet<>();
 }

@@ -11,9 +11,9 @@ import com.sport_events.api.infrastructure.persistence.jpa.entity.EventTranslati
 @Repository
 public interface EventTranslationJpaRepository extends JpaRepository<EventTranslationJpaEntity, Integer> {
 
-	List<EventTranslationJpaEntity> findByEventId(Long eventId);
+	List<EventTranslationJpaEntity> findByEvent_EventId(Long eventId);
 
-	List<EventTranslationJpaEntity> findByLanguageId(Integer languageId);
+	List<EventTranslationJpaEntity> findByLanguage_LanguageId(Integer languageId);
 
-	Optional<EventTranslationJpaEntity> findByEventIdAndLanguageId(Long eventId, Integer languageId);
+	Optional<EventTranslationJpaEntity> findByEvent_EventIdAndLanguage_LanguageId(Long eventId, Integer languageId);
 }
