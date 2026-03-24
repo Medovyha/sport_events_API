@@ -7,9 +7,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "team_players")
+@Getter
+@Setter
+@NoArgsConstructor
 public class TeamPlayerJpaEntity {
 
 	@Id
@@ -23,31 +29,4 @@ public class TeamPlayerJpaEntity {
 
 	@Column(name = "player_id", nullable = false)
 	private Integer playerId;
-
-	public TeamPlayerJpaEntity() {
-	}
-
-	public Integer getTeamPlayerId() {
-		return teamPlayerId;
-	}
-
-	public void setTeamPlayerId(Integer teamPlayerId) {
-		this.teamPlayerId = teamPlayerId;
-	}
-
-	public Integer getTeamId() {
-		return teamId;
-	}
-
-	public void setTeamId(Integer teamId) {
-		this.teamId = teamId;
-	}
-
-	public Integer getPlayerId() {
-		return playerId;
-	}
-
-	public void setPlayerId(Integer playerId) {
-		this.playerId = playerId;
-	}
 }

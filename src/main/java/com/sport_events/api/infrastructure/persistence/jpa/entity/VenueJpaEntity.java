@@ -7,9 +7,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "venues")
+@Getter
+@Setter
+@NoArgsConstructor
 public class VenueJpaEntity {
 
 	@Id
@@ -23,31 +29,4 @@ public class VenueJpaEntity {
 
 	@Column(name = "address", nullable = false, length = 255)
 	private String address;
-
-	public VenueJpaEntity() {
-	}
-
-	public Integer getVenueId() {
-		return venueId;
-	}
-
-	public void setVenueId(Integer venueId) {
-		this.venueId = venueId;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
 }

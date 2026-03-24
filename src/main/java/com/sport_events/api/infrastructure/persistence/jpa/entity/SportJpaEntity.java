@@ -7,9 +7,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "sports")
+@Getter
+@Setter
+@NoArgsConstructor
 public class SportJpaEntity {
 
 	@Id
@@ -17,15 +23,4 @@ public class SportJpaEntity {
 	@SequenceGenerator(name = "sports_sport_id_seq", sequenceName = "sports_sport_id_seq", allocationSize = 1)
 	@Column(name = "sport_id", nullable = false)
 	private Integer sportId;
-
-	public SportJpaEntity() {
-	}
-
-	public Integer getSportId() {
-		return sportId;
-	}
-
-	public void setSportId(Integer sportId) {
-		this.sportId = sportId;
-	}
 }

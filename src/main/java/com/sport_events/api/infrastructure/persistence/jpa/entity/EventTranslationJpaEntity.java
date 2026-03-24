@@ -7,9 +7,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "event_translations")
+@Getter
+@Setter
+@NoArgsConstructor
 public class EventTranslationJpaEntity {
 
 	@Id
@@ -29,47 +35,4 @@ public class EventTranslationJpaEntity {
 
 	@Column(name = "description", nullable = false, columnDefinition = "text")
 	private String description;
-
-	public EventTranslationJpaEntity() {
-	}
-
-	public Integer getEventTranslationId() {
-		return eventTranslationId;
-	}
-
-	public void setEventTranslationId(Integer eventTranslationId) {
-		this.eventTranslationId = eventTranslationId;
-	}
-
-	public Long getEventId() {
-		return eventId;
-	}
-
-	public void setEventId(Long eventId) {
-		this.eventId = eventId;
-	}
-
-	public Integer getLanguageId() {
-		return languageId;
-	}
-
-	public void setLanguageId(Integer languageId) {
-		this.languageId = languageId;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
 }

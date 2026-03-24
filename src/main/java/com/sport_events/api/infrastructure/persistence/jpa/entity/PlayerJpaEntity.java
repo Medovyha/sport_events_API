@@ -9,9 +9,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "players")
+@Getter
+@Setter
+@NoArgsConstructor
 public class PlayerJpaEntity {
 
 	@Id
@@ -28,39 +34,4 @@ public class PlayerJpaEntity {
 
 	@Column(name = "date_of_birth", nullable = false)
 	private LocalDate dateOfBirth;
-
-	public PlayerJpaEntity() {
-	}
-
-	public Integer getPlayerId() {
-		return playerId;
-	}
-
-	public void setPlayerId(Integer playerId) {
-		this.playerId = playerId;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public LocalDate getDateOfBirth() {
-		return dateOfBirth;
-	}
-
-	public void setDateOfBirth(LocalDate dateOfBirth) {
-		this.dateOfBirth = dateOfBirth;
-	}
 }
