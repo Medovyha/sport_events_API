@@ -30,3 +30,12 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+## environment files ###
+.env
+
+## copilot files ###
+.github/copilot-instructions.md
+
+
