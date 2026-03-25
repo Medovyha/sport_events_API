@@ -676,9 +676,3 @@ ALTER TABLE ONLY public.team_players
 ALTER TABLE ONLY public.teams
     ADD CONSTRAINT _teams_sports_sport_id_fk FOREIGN KEY (sport_id) REFERENCES public.sports(sport_id);
 
-
---
--- PostgreSQL database dump complete
---
-
-\unrestrict MenqQTUCCuODVvHCYn5oE6XpATnjfTLRKh8QKI7ZXWCXQv00z54X8BR70kPhHUx

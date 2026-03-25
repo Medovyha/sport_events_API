@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   server:
     build:
@@ -22,7 +20,7 @@ services:
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -h ${POSTGRES_HOST} -p ${POSTGRES_PORT}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} -h ${POSTGRES_HOST} -p ${POSTGRES_PORT}"]
       interval: 1s
       timeout: 5s
       retries: 10

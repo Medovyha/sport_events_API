@@ -93,6 +93,28 @@ If translation is missing, API falls back to English.
   - This is the seed dataset
   - Contains initial languages/sports/teams/players/events/translations
 
+### Apply `data.sql` manually
+
+`schema.sql` is auto-mounted in Docker, but `data.sql` is manual.
+
+#### Option A: Docker Compose (recommended)
+
+```bash
+docker compose exec -T postgres psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" < src/main/resources/db/data.sql
+```
+
+#### Option B: Local PostgreSQL
+
+```bash
+psql -U user -d sportradar -f src/main/resources/db/data.sql
+```
+
+#### Verify seed was applied
+
+```bash
+docker compose exec -T postgres psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT COUNT(*) FROM events;"
+```
+
 
 ## 🏛️ Why Onion Architecture here
 
