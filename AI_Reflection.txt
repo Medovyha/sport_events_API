@@ -1,0 +1,16 @@
+AI Reflection
+
+In this project, I used AI as a supporting tool during implementation.
+
+What I did myself:
+- I designed and created the database schema myself.
+- I chose the architecture myself and built the architecture myself.
+- I made the key design decisions for project structure and direction.
+
+How AI helped me:
+- AI helped me translate database tables into application code (entities, mappings, and related layers).
+- AI helped me with writing and improving tests.
+- AI helped me with implementing and adjusting controllers.
+
+Summary:
+AI was used as an assistant to speed up coding and reduce routine work, while the core database design and architectural decisions were made and implemented by me.
