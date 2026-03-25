@@ -17,6 +17,7 @@ import com.sport_events.api.infrastructure.persistence.jpa.entity.PlayerJpaEntit
 import com.sport_events.api.infrastructure.persistence.jpa.entity.SportJpaEntity;
 import com.sport_events.api.infrastructure.persistence.jpa.entity.SportTranslationJpaEntity;
 import com.sport_events.api.infrastructure.persistence.jpa.entity.TeamJpaEntity;
+import com.sport_events.api.infrastructure.persistence.jpa.entity.TeamPlayerJpaEntity;
 import com.sport_events.api.infrastructure.persistence.jpa.entity.VenueJpaEntity;
 
 class InfrastructureMappersTest {
@@ -204,5 +205,37 @@ class InfrastructureMappersTest {
         var withNulls = SportTranslationMapper.toDomain(entity);
         assertThat(withNulls.getSportId()).isNull();
         assertThat(withNulls.getLanguageId()).isNull();
+    }
+
+    @Test
+    void sportMapper_mapsFields() {
+        SportJpaEntity entity = new SportJpaEntity();
+        entity.setSportId(5);
+
+        var domain = SportMapper.toDomain(entity);
+        assertThat(domain.getSportId()).isEqualTo(5);
+    }
+
+    @Test
+    void teamPlayerMapper_mapsAndHandlesNullRelations() {
+        TeamPlayerJpaEntity entity = new TeamPlayerJpaEntity();
+        entity.setTeamPlayerId(1);
+        TeamJpaEntity team = new TeamJpaEntity();
+        team.setTeamId(7);
+        PlayerJpaEntity player = new PlayerJpaEntity();
+        player.setPlayerId(100);
+        entity.setTeam(team);
+        entity.setPlayer(player);
+
+        var domain = TeamPlayerMapper.toDomain(entity);
+        assertThat(domain.getTeamPlayerId()).isEqualTo(1);
+        assertThat(domain.getTeamId()).isEqualTo(7);
+        assertThat(domain.getPlayerId()).isEqualTo(100);
+
+        entity.setTeam(null);
+        entity.setPlayer(null);
+        var withNulls = TeamPlayerMapper.toDomain(entity);
+        assertThat(withNulls.getTeamId()).isNull();
+        assertThat(withNulls.getPlayerId()).isNull();
     }
 }

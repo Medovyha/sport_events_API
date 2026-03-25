@@ -12,6 +12,7 @@ import com.sport_events.api.application.dto.result.EventResult;
 import com.sport_events.api.application.usecase.GetEventUseCase;
 import com.sport_events.api.presentation.dto.EventDetailsResponse;
 import com.sport_events.api.presentation.mapper.EventResponseMapper;
+import com.sport_events.api.presentation.util.LanguageUtils;
 
 @RestController
 @RequestMapping("/events")
@@ -27,8 +28,7 @@ public class EventController {
     public ResponseEntity<EventDetailsResponse> getEvent(
             @PathVariable Long id,
             @RequestHeader(value = "Accept-Language", defaultValue = "en") String acceptLanguage) {
-        String languageCode = acceptLanguage.split(",")[0].split(";")[0].split("-")[0].trim().toLowerCase();
-        EventResult result = getEventUseCase.execute(new GetEventQuery(id, languageCode));
+        EventResult result = getEventUseCase.execute(new GetEventQuery(id, LanguageUtils.normalizeLanguage(acceptLanguage)));
         return ResponseEntity.ok(EventResponseMapper.toResponse(result));
     }
 }

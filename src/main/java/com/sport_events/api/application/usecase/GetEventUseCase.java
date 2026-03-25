@@ -79,7 +79,8 @@ public class GetEventUseCase {
                                             p.getPlayerId(),
                                             p.getFirstName(),
                                             p.getLastName(),
-                                            p.getDateOfBirth()))
+                                            p.getDateOfBirth(),
+                                            null))
                                     .orElseThrow(() -> new DomainException(
                                             "Player not found: " + ep.getPlayerId())))
                             .toList();

@@ -28,7 +28,7 @@ class EventResponseMapperTest {
                         "Real Madrid",
                         1,
                         "Football",
-                        List.of(new PlayerResult(100, "Carlos", "Silva", LocalDate.parse("1990-03-15"))))),
+                        List.of(new PlayerResult(100, "Carlos", "Silva", LocalDate.parse("1990-03-15"), null)))),
                 new EventTranslationResult(41, 1, "El Clásico", "English description"));
 
         EventDetailsResponse response = EventResponseMapper.toResponse(result);
