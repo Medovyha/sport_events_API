@@ -15,6 +15,7 @@ public class PlayerMapper {
 
     public static PlayerJpaEntity toEntity(Player player) {
         PlayerJpaEntity entity = new PlayerJpaEntity();
+        entity.setPlayerId(player.getPlayerId());
         entity.setFirstName(player.getFirstName());
         entity.setLastName(player.getLastName());
         entity.setDateOfBirth(player.getDateOfBirth());

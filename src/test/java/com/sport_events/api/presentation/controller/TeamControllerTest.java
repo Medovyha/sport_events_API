@@ -21,10 +21,13 @@ import com.sport_events.api.application.usecase.AssignPlayerToTeamUseCase;
 import com.sport_events.api.application.usecase.CreateTeamUseCase;
 import com.sport_events.api.application.usecase.GetPlayerUseCase;
 import com.sport_events.api.application.usecase.GetTeamUseCase;
+import com.sport_events.api.application.usecase.RemovePlayerFromTeamUseCase;
+import com.sport_events.api.application.usecase.UpdateTeamUseCase;
 import com.sport_events.api.presentation.dto.AssignPlayerRequest;
 import com.sport_events.api.presentation.dto.CreateTeamRequest;
 import com.sport_events.api.presentation.dto.PlayerResponse;
 import com.sport_events.api.presentation.dto.TeamResponse;
+import com.sport_events.api.presentation.dto.UpdateTeamRequest;
 
 @ExtendWith(MockitoExtension.class)
 class TeamControllerTest {
@@ -37,6 +40,10 @@ class TeamControllerTest {
     private CreateTeamUseCase createTeamUseCase;
     @Mock
     private AssignPlayerToTeamUseCase assignPlayerToTeamUseCase;
+    @Mock
+    private UpdateTeamUseCase updateTeamUseCase;
+    @Mock
+    private RemovePlayerFromTeamUseCase removePlayerFromTeamUseCase;
 
     @InjectMocks
     private TeamController controller;
@@ -98,5 +105,33 @@ class TeamControllerTest {
 
         assertThat(response.getStatusCode().value()).isEqualTo(204);
         verify(assignPlayerToTeamUseCase).execute(any());
+    }
+
+    @Test
+    void updateTeam_returns200WithUpdatedTeam() {
+        when(updateTeamUseCase.execute(any())).thenReturn(new TeamResult(7, "Updated Team", 1, null));
+
+        ResponseEntity<TeamResponse> response = controller.updateTeam(7, new UpdateTeamRequest("Updated Team", 1));
+
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().teamId()).isEqualTo(7);
+        assertThat(response.getBody().name()).isEqualTo("Updated Team");
+    }
+
+    @Test
+    void deleteTeam_returns204() {
+        ResponseEntity<Void> response = controller.deleteTeam(7);
+
+        assertThat(response.getStatusCode().value()).isEqualTo(204);
+        verify(updateTeamUseCase).deleteById(7);
+    }
+
+    @Test
+    void removePlayer_returns204() {
+        ResponseEntity<Void> response = controller.removePlayer(7, 100);
+
+        assertThat(response.getStatusCode().value()).isEqualTo(204);
+        verify(removePlayerFromTeamUseCase).execute(any());
     }
 }

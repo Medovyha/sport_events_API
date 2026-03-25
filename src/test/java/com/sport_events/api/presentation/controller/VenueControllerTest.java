@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,9 @@ import org.springframework.http.ResponseEntity;
 import com.sport_events.api.application.dto.result.VenueResult;
 import com.sport_events.api.application.usecase.CreateVenueUseCase;
 import com.sport_events.api.application.usecase.GetVenueUseCase;
+import com.sport_events.api.application.usecase.UpdateVenueUseCase;
 import com.sport_events.api.presentation.dto.CreateVenueRequest;
+import com.sport_events.api.presentation.dto.UpdateVenueRequest;
 import com.sport_events.api.presentation.dto.VenueResponse;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,6 +28,8 @@ class VenueControllerTest {
     private GetVenueUseCase getVenueUseCase;
     @Mock
     private CreateVenueUseCase createVenueUseCase;
+    @Mock
+    private UpdateVenueUseCase updateVenueUseCase;
 
     @InjectMocks
     private VenueController controller;
@@ -65,5 +70,25 @@ class VenueControllerTest {
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().name()).isEqualTo("Wembley");
         assertThat(response.getBody().address()).isEqualTo("London");
+    }
+
+    @Test
+    void updateVenue_returns200WithUpdatedVenue() {
+        when(updateVenueUseCase.execute(any())).thenReturn(new VenueResult(3, "Updated", "Address"));
+
+        ResponseEntity<VenueResponse> response = controller.updateVenue(3, new UpdateVenueRequest("Updated", "Address"));
+
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().venueId()).isEqualTo(3);
+        assertThat(response.getBody().name()).isEqualTo("Updated");
+    }
+
+    @Test
+    void deleteVenue_returns204() {
+        ResponseEntity<Void> response = controller.deleteVenue(3);
+
+        assertThat(response.getStatusCode().value()).isEqualTo(204);
+        verify(updateVenueUseCase).deleteById(3);
     }
 }
