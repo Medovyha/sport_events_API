@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Events - Live Event Management</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">🏟️ Sports Events</h1>
+                <p class="subtitle">Live Event Management Platform</p>
+            </div>
+        </header>
+
+        <section class="toolbar">
+            <div class="toolbar-item">
+                <label for="language-select">🌐 Language</label>
+                <div class="select-wrap">
+                    <select id="language-select" class="pretty-select">
+                        <option value="en" selected>English (en)</option>
+                        <option value="pl">Polish (pl)</option>
+                        <option value="uk">Ukrainian (uk)</option>
+                    </select>
+                </div>
+            </div>
+            <button id="refresh-all" class="btn-secondary" type="button">↻ Refresh Data</button>
+        </section>
+
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-tab="all-events">
+                All Events
+            </button>
+            <button class="nav-tab" data-tab="future-events">
+                Upcoming Events
+            </button>
+            <button class="nav-tab" data-tab="past-events">
+                Past Events
+            </button>
+        </nav>
+
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Loading events...</p>
+        </div>
+
+        <div id="success-message" class="success-message hidden"></div>
+        <div id="error-message" class="error-message hidden"></div>
+
+        <main class="main-content">
+            <section id="all-events" class="tab-content active">
+                <h2>All Events</h2>
+                <div id="all-events-list" class="events-grid"></div>
+            </section>
+
+            <section id="future-events" class="tab-content">
+                <h2>Upcoming Events</h2>
+                <div id="future-events-list" class="events-grid"></div>
+            </section>
+
+            <section id="past-events" class="tab-content">
+                <h2>Past Events</h2>
+                <div id="past-events-list" class="events-grid"></div>
+            </section>
+        </main>
+
+        <section class="admin-panel">
+            <div class="panel-header">
+                <h2>⚙️ Admin Control Center</h2>
+                <p>Create and manage sports, venues, teams, players, and event assignments.</p>
+            </div>
+
+            <div class="panel-grid">
+                <article class="panel-card">
+                    <h3>🏅 Sports & Venues</h3>
+                    <form id="create-sport-form" class="stack-form">
+                        <label for="sport-name">Sport name</label>
+                        <input id="sport-name" name="sportName" type="text" placeholder="e.g. Football" required>
+                        <button class="btn-primary" type="submit">Create Sport</button>
+                    </form>
+
+                    <form id="sport-translation-form" class="stack-form spaced-top">
+                        <label for="sport-translation-sport-select">Sport</label>
+                        <div class="select-wrap">
+                            <select id="sport-translation-sport-select" class="pretty-select" required></select>
+                        </div>
+                        <label for="sport-translation-lang-select">Language</label>
+                        <div class="select-wrap">
+                            <select id="sport-translation-lang-select" class="pretty-select" required>
+                                <option value="pl">Polish (pl)</option>
+                                <option value="uk">Ukrainian (uk)</option>
+                            </select>
+                        </div>
+                        <label for="sport-translation-name">Translated sport name</label>
+                        <input id="sport-translation-name" type="text" required>
+                        <button class="btn-secondary" type="submit">Save Sport Translation</button>
+                    </form>
+
+                    <form id="create-venue-form" class="stack-form spaced-top">
+                        <label for="venue-name">Venue name</label>
+                        <input id="venue-name" name="venueName" type="text" placeholder="e.g. National Stadium" required>
+                        <label for="venue-address">Address</label>
+                        <input id="venue-address" name="venueAddress" type="text" placeholder="City, Street, 10" required>
+                        <button class="btn-primary" type="submit">Create Venue</button>
+                    </form>
+                </article>
+
+                <article class="panel-card">
+                    <h3>👥 Players & Teams</h3>
+                    <form id="create-player-form" class="stack-form">
+                        <label for="player-first-name">First name</label>
+                        <input id="player-first-name" name="firstName" type="text" required>
+                        <label for="player-last-name">Last name</label>
+                        <input id="player-last-name" name="lastName" type="text" required>
+                        <label for="player-dob">Date of birth</label>
+                        <input id="player-dob" name="dateOfBirth" type="date" required>
+                        <button class="btn-primary" type="submit">Create Player</button>
+                    </form>
+
+                    <form id="create-team-form" class="stack-form spaced-top">
+                        <label for="team-name">Team name</label>
+                        <input id="team-name" name="teamName" type="text" required>
+                        <label for="team-sport-select">Sport</label>
+                        <div class="select-wrap">
+                            <select id="team-sport-select" class="pretty-select" required></select>
+                        </div>
+                        <button class="btn-primary" type="submit">Create Team</button>
+                    </form>
+                </article>
+
+                <article class="panel-card">
+                    <h3>📅 Event Builder</h3>
+                    <form id="create-event-form" class="stack-form">
+                        <label for="event-name">Event name</label>
+                        <input id="event-name" name="eventName" type="text" required>
+                        <label for="event-description">Description</label>
+                        <textarea id="event-description" name="eventDescription" rows="3" required></textarea>
+                        <label for="event-start">Start date/time</label>
+                        <input id="event-start" name="eventStart" type="datetime-local" required>
+                        <label for="event-venue-select">Venue</label>
+                        <div class="select-wrap">
+                            <select id="event-venue-select" class="pretty-select" required></select>
+                        </div>
+                        <button class="btn-primary" type="submit">Create Event</button>
+                    </form>
+
+                    <form id="event-translation-form" class="stack-form spaced-top">
+                        <label for="event-translation-event-select">Event</label>
+                        <div class="select-wrap">
+                            <select id="event-translation-event-select" class="pretty-select" required></select>
+                        </div>
+                        <label for="event-translation-lang-select">Language</label>
+                        <div class="select-wrap">
+                            <select id="event-translation-lang-select" class="pretty-select" required>
+                                <option value="pl">Polish (pl)</option>
+                                <option value="uk">Ukrainian (uk)</option>
+                            </select>
+                        </div>
+                        <label for="event-translation-name">Translated event name</label>
+                        <input id="event-translation-name" type="text" required>
+                        <label for="event-translation-description">Translated event description</label>
+                        <textarea id="event-translation-description" rows="2" required></textarea>
+                        <button class="btn-secondary" type="submit">Save Event Translation</button>
+                    </form>
+                </article>
+
+                <article class="panel-card">
+                    <h3>🔗 Team ↔ Player</h3>
+                    <label for="team-assign-select">Team</label>
+                    <div class="select-wrap">
+                        <select id="team-assign-select" class="pretty-select"></select>
+                    </div>
+                    <label for="player-assign-select">Player</label>
+                    <div class="select-wrap">
+                        <select id="player-assign-select" class="pretty-select"></select>
+                    </div>
+                    <div class="button-row">
+                        <button id="assign-player-btn" class="btn-primary" type="button">Assign Player</button>
+                        <button id="remove-player-team-btn" class="btn-danger" type="button">Remove Player</button>
+                    </div>
+                </article>
+
+                <article class="panel-card full-width">
+                    <h3>🎯 Event Team Management</h3>
+                    <div class="row-grid">
+                        <div>
+                            <label for="event-select">Event</label>
+                            <div class="select-wrap">
+                                <select id="event-select" class="pretty-select"></select>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="event-team-select">Team</label>
+                            <div class="select-wrap">
+                                <select id="event-team-select" class="pretty-select"></select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <label for="event-player-select">Players for event team</label>
+                    <div class="select-wrap multi">
+                        <select id="event-player-select" class="pretty-select" multiple size="5"></select>
+                    </div>
+
+                    <label for="event-player-remove-select">Single player remove</label>
+                    <div class="select-wrap">
+                        <select id="event-player-remove-select" class="pretty-select"></select>
+                    </div>
+
+                    <div class="button-row wrap">
+                        <button id="add-team-to-event-btn" class="btn-primary" type="button">Add Team to Event</button>
+                        <button id="add-players-to-event-btn" class="btn-primary" type="button">Add Players to Event Team</button>
+                        <button id="replace-event-players-btn" class="btn-secondary" type="button">Replace Event Team Players</button>
+                        <button id="remove-player-event-btn" class="btn-danger" type="button">Remove Player from Event Team</button>
+                        <button id="remove-team-event-btn" class="btn-danger" type="button">Remove Team from Event</button>
+                    </div>
+                </article>
+
+                <article class="panel-card full-width">
+                    <h3>🧹 Quick Delete</h3>
+                    <div class="row-grid">
+                        <div>
+                            <label for="delete-event-select">Delete Event</label>
+                            <div class="select-wrap">
+                                <select id="delete-event-select" class="pretty-select"></select>
+                            </div>
+                            <button id="delete-event-btn" class="btn-danger full" type="button">Delete Event</button>
+                        </div>
+                        <div>
+                            <label for="delete-team-select">Delete Team</label>
+                            <div class="select-wrap">
+                                <select id="delete-team-select" class="pretty-select"></select>
+                            </div>
+                            <button id="delete-team-btn" class="btn-danger full" type="button">Delete Team</button>
+                        </div>
+                        <div>
+                            <label for="delete-player-select">Delete Player</label>
+                            <div class="select-wrap">
+                                <select id="delete-player-select" class="pretty-select"></select>
+                            </div>
+                            <button id="delete-player-btn" class="btn-danger full" type="button">Delete Player</button>
+                        </div>
+                        <div>
+                            <label for="delete-venue-select">Delete Venue</label>
+                            <div class="select-wrap">
+                                <select id="delete-venue-select" class="pretty-select"></select>
+                            </div>
+                            <button id="delete-venue-btn" class="btn-danger full" type="button">Delete Venue</button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <div id="event-modal" class="modal hidden">
+            <div class="modal-content">
+                <button class="modal-close">&times;</button>
+                <div id="modal-body" class="modal-body"></div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>&copy; 2026 Sports Events. All rights reserved.</p>
+            <p class="api-status">
+                API Status: <span id="api-status" class="status-ok">Connected</span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="js/api-client.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
