@@ -19,9 +19,14 @@ import com.sport_events.api.application.dto.result.TeamResult;
 import com.sport_events.api.application.usecase.CreateSportUseCase;
 import com.sport_events.api.application.usecase.GetSportUseCase;
 import com.sport_events.api.application.usecase.GetTeamUseCase;
+import com.sport_events.api.application.usecase.UpdateSportUseCase;
+import com.sport_events.api.application.usecase.UpsertSportTranslationUseCase;
 import com.sport_events.api.presentation.dto.CreateSportRequest;
 import com.sport_events.api.presentation.dto.SportResponse;
+import com.sport_events.api.presentation.dto.SportTranslationRequest;
 import com.sport_events.api.presentation.dto.TeamResponse;
+import com.sport_events.api.presentation.dto.UpdateSportRequest;
+import com.sport_events.api.presentation.dto.UpsertSportTranslationRequest;
 
 @ExtendWith(MockitoExtension.class)
 class SportControllerTest {
@@ -32,6 +37,10 @@ class SportControllerTest {
     private GetTeamUseCase getTeamUseCase;
     @Mock
     private CreateSportUseCase createSportUseCase;
+    @Mock
+    private UpdateSportUseCase updateSportUseCase;
+    @Mock
+    private UpsertSportTranslationUseCase upsertSportTranslationUseCase;
 
     @InjectMocks
     private SportController controller;
@@ -81,11 +90,52 @@ class SportControllerTest {
     void createSport_returns201WithCreatedSport() {
         when(createSportUseCase.execute(any())).thenReturn(new SportResult(5, "Football"));
 
-        ResponseEntity<SportResponse> response = controller.createSport(new CreateSportRequest("Football"), "en");
+        ResponseEntity<SportResponse> response = controller.createSport(
+            new CreateSportRequest("Football", null));
 
         assertThat(response.getStatusCode().value()).isEqualTo(201);
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().sportId()).isEqualTo(5);
         assertThat(response.getBody().name()).isEqualTo("Football");
+    }
+
+    @Test
+    void createSport_withTranslations_returns201() {
+        when(createSportUseCase.execute(any())).thenReturn(new SportResult(6, "Футбол"));
+
+        ResponseEntity<SportResponse> response = controller.createSport(
+            new CreateSportRequest("Football", java.util.List.of(
+                new SportTranslationRequest("uk", "Футбол"))));
+
+        assertThat(response.getStatusCode().value()).isEqualTo(201);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().sportId()).isEqualTo(6);
+    }
+
+    @Test
+    void updateSport_returns200() {
+        when(updateSportUseCase.execute(any())).thenReturn(new SportResult(5, "Football"));
+
+        ResponseEntity<SportResponse> response = controller.updateSport(
+                5,
+            new UpdateSportRequest("Football", null));
+
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().sportId()).isEqualTo(5);
+    }
+
+    @Test
+    void upsertTranslation_returns200() {
+        when(upsertSportTranslationUseCase.execute(any())).thenReturn(new SportResult(5, "Football"));
+
+        ResponseEntity<SportResponse> response = controller.upsertTranslation(
+                5,
+                "en",
+                new UpsertSportTranslationRequest("Football"));
+
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().sportId()).isEqualTo(5);
     }
 }
