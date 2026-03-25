@@ -6,6 +6,14 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
 jobs:
   build-and-test:
     name: Build and Test
@@ -25,8 +33,111 @@ jobs:
       - name: Make Maven wrapper executable
         run: chmod +x mvnw
 
-      - name: Run tests
-        run: ./mvnw -B test
+      - name: Run tests with coverage
+        run: ./mvnw -B clean test jacoco:report
+
+      - name: Publish test results
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: JUnit Test Results
+          path: target/surefire-reports/TEST-*.xml
+          reporter: java-junit
+          fail-on-error: false
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: target/surefire-reports/**
+          if-no-files-found: warn
+
+      - name: Upload JaCoCo HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-html-report
+          path: target/site/jacoco/**
+          if-no-files-found: warn
+
+      - name: Build coverage summary
+        if: always()
+        id: coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          CSV="target/site/jacoco/jacoco.csv"
+
+          if [[ ! -f "$CSV" ]]; then
+            echo "line_coverage=0" >> "$GITHUB_OUTPUT"
+            echo "branch_coverage=0" >> "$GITHUB_OUTPUT"
+            {
+              echo "## Test Coverage"
+              echo "JaCoCo CSV was not found at $CSV."
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          LINE_STATS=$(awk -F, 'NR>1{mi+=$8;ci+=$9}END{t=mi+ci; if(t==0){print "0.00"}else{printf "%.2f", (ci*100)/t}}' "$CSV")
+          BRANCH_STATS=$(awk -F, 'NR>1{mb+=$6;cb+=$7}END{t=mb+cb; if(t==0){print "0.00"}else{printf "%.2f", (cb*100)/t}}' "$CSV")
+
+          echo "line_coverage=$LINE_STATS" >> "$GITHUB_OUTPUT"
+          echo "branch_coverage=$BRANCH_STATS" >> "$GITHUB_OUTPUT"
+
+          {
+            echo "## Test Coverage"
+            echo "- Line coverage: **${LINE_STATS}%**"
+            echo "- Branch coverage: **${BRANCH_STATS}%**"
+            echo "- Full HTML report: download artifact **jacoco-html-report** from this run"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Comment coverage on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const line = '${{ steps.coverage.outputs.line_coverage }}';
+            const branch = '${{ steps.coverage.outputs.branch_coverage }}';
+            const body = [
+              '## CI Coverage Report',
+              `- Line coverage: **${line}%**`,
+              `- Branch coverage: **${branch}%**`,
+              '- Full JaCoCo HTML report is available as workflow artifact `jacoco-html-report`.'
+            ].join('\n');
+
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const marker = '<!-- jacoco-coverage-comment -->';
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number,
+              per_page: 100,
+            });
+
+            const existing = comments.find(
+              c => c.user?.type === 'Bot' && c.body?.includes(marker)
+            );
+
+            const finalBody = `${marker}\n${body}`;
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existing.id,
+                body: finalBody,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body: finalBody,
+              });
+            }
 
       - name: Build package
         run: ./mvnw -B package -DskipTests

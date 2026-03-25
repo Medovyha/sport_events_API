@@ -1,4 +1,7 @@
 package com.sport_events.api.application.dto.query;
 
-public record GetEventQuery(Long eventId, String languageCode) {
+public record GetEventQuery(
+	Long eventId,
+	String languageCode
+) {
 }

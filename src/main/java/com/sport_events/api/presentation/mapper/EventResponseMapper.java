@@ -13,21 +13,25 @@ public class EventResponseMapper {
                         result.venue().address())
                 : null;
 
-        var teams = result.teams().stream()
-                .map(t -> {
-                    var players = t.players().stream()
-                            .map(p -> new EventDetailsResponse.PlayerResponse(
-                                    p.playerId(), p.firstName(), p.lastName(), p.dateOfBirth()))
-                            .toList();
-                    return new EventDetailsResponse.EventTeamResponse(
-                            t.eventTeamsId(),
-                            t.teamId(),
-                            t.teamName(),
-                            t.sportId(),
-                            t.sportName(),
-                            players);
-                })
-                .toList();
+        var teams = result.teams() != null
+                ? result.teams().stream()
+                        .map(t -> {
+                            var players = t.players() != null
+                                    ? t.players().stream()
+                                            .map(p -> new EventDetailsResponse.PlayerResponse(
+                                                    p.playerId(), p.firstName(), p.lastName(), p.dateOfBirth()))
+                                            .toList()
+                                    : null;
+                            return new EventDetailsResponse.EventTeamResponse(
+                                    t.eventTeamsId(),
+                                    t.teamId(),
+                                    t.teamName(),
+                                    t.sportId(),
+                                    t.sportName(),
+                                    players);
+                        })
+                        .toList()
+                : null;
 
         String name = result.translation() != null ? result.translation().name() : null;
         String description = result.translation() != null ? result.translation().description() : null;

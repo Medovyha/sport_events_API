@@ -11,6 +11,7 @@ import com.sport_events.api.application.dto.result.VenueResult;
 import com.sport_events.api.domain.exception.DomainException;
 import com.sport_events.api.domain.model.Event;
 import com.sport_events.api.domain.model.Language;
+import com.sport_events.api.domain.model.Team;
 import com.sport_events.api.domain.model.Venue;
 import com.sport_events.api.domain.repository.EventPlayerRepository;
 import com.sport_events.api.domain.repository.EventRepository;
@@ -67,16 +68,20 @@ public class GetEventUseCase {
         List<EventTeamResult> teams = eventTeamRepository.findByEventId(event.getEventId())
                 .stream()
                 .map(et -> {
-                    var team = teamRepository.findById(et.getTeamId())
+                    Team team = teamRepository.findById(et.getTeamId())
                             .orElseThrow(() -> new DomainException("Team not found: " + et.getTeamId()));
 
                     String sportName = resolveSportName(team.getSportId(), languageId);
-
                     List<PlayerResult> players = eventPlayerRepository.findByEventTeamId(et.getEventTeamsId())
                             .stream()
                             .map(ep -> playerRepository.findById(ep.getPlayerId())
-                                    .map(p -> new PlayerResult(p.getPlayerId(), p.getFirstName(), p.getLastName(), p.getDateOfBirth()))
-                                    .orElseThrow(() -> new DomainException("Player not found: " + ep.getPlayerId())))
+                                    .map(p -> new PlayerResult(
+                                            p.getPlayerId(),
+                                            p.getFirstName(),
+                                            p.getLastName(),
+                                            p.getDateOfBirth()))
+                                    .orElseThrow(() -> new DomainException(
+                                            "Player not found: " + ep.getPlayerId())))
                             .toList();
 
                     return new EventTeamResult(
