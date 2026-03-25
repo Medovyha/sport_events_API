@@ -28,6 +28,8 @@ import com.sport_events.api.domain.repository.SportTranslationRepository;
 import com.sport_events.api.domain.repository.TeamPlayerRepository;
 import com.sport_events.api.domain.repository.TeamRepository;
 import com.sport_events.api.domain.repository.VenueRepository;
+import com.sport_events.api.application.usecase.UpdateSportUseCase;
+import com.sport_events.api.application.usecase.UpsertSportTranslationUseCase;
 
 @Configuration
 public class UseCaseConfig {
@@ -98,6 +100,19 @@ public class UseCaseConfig {
             SportTranslationRepository sportTranslationRepository,
             LanguageRepository languageRepository) {
         return new CreateSportUseCase(sportRepository, sportTranslationRepository, languageRepository);
+    }
+
+    @Bean
+    public UpsertSportTranslationUseCase upsertSportTranslationUseCase(
+            SportRepository sportRepository,
+            SportTranslationRepository sportTranslationRepository,
+            LanguageRepository languageRepository) {
+        return new UpsertSportTranslationUseCase(sportRepository, sportTranslationRepository, languageRepository);
+    }
+
+    @Bean
+    public UpdateSportUseCase updateSportUseCase(UpsertSportTranslationUseCase upsertSportTranslationUseCase) {
+        return new UpdateSportUseCase(upsertSportTranslationUseCase);
     }
 
     @Bean

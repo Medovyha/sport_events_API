@@ -5,7 +5,7 @@ import java.util.List;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 
-public record CreateSportRequest(
+public record UpdateSportRequest(
         @NotBlank String name,
         List<@Valid SportTranslationRequest> translations
 ) {
