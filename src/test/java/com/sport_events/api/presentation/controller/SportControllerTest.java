@@ -16,6 +16,9 @@ import org.springframework.http.ResponseEntity;
 
 import com.sport_events.api.application.dto.result.SportResult;
 import com.sport_events.api.application.dto.result.TeamResult;
+import com.sport_events.api.application.dto.query.GetSportQuery;
+import com.sport_events.api.application.dto.query.GetSportsQuery;
+import com.sport_events.api.application.dto.query.GetTeamsBySportQuery;
 import com.sport_events.api.application.usecase.CreateSportUseCase;
 import com.sport_events.api.application.usecase.GetSportUseCase;
 import com.sport_events.api.application.usecase.GetTeamUseCase;
@@ -47,22 +50,22 @@ class SportControllerTest {
 
     @Test
     void getAllSports_normalizesAcceptLanguage() {
-        when(getSportUseCase.findAll("pl")).thenReturn(List.of(
+        when(getSportUseCase.execute(any(GetSportsQuery.class))).thenReturn(List.of(
                 new SportResult(1, "Piłka nożna"),
                 new SportResult(2, "Koszykówka")));
 
         ResponseEntity<List<SportResponse>> response = controller.getAllSports("pl-PL,pl;q=0.9");
 
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(getSportUseCase).findAll(captor.capture());
-        assertThat(captor.getValue()).isEqualTo("pl");
+        ArgumentCaptor<GetSportsQuery> captor = ArgumentCaptor.forClass(GetSportsQuery.class);
+        verify(getSportUseCase).execute(captor.capture());
+        assertThat(captor.getValue().languageCode()).isEqualTo("pl");
         assertThat(response.getBody()).hasSize(2);
         assertThat(response.getBody().get(0).name()).isEqualTo("Piłka nożna");
     }
 
     @Test
     void getSport_normalizesAcceptLanguageAndReturnsSport() {
-        when(getSportUseCase.findById(1, "en")).thenReturn(new SportResult(1, "Football"));
+        when(getSportUseCase.execute(any(GetSportQuery.class))).thenReturn(new SportResult(1, "Football"));
 
         ResponseEntity<SportResponse> response = controller.getSport(1, "en");
 
@@ -74,7 +77,7 @@ class SportControllerTest {
 
     @Test
     void getTeamsBySport_returnsTeamsForThatSport() {
-        when(getTeamUseCase.findBySportId(1, "en")).thenReturn(List.of(
+        when(getTeamUseCase.execute(any(GetTeamsBySportQuery.class))).thenReturn(List.of(
                 new TeamResult(7, "Real Madrid", 1, "Football"),
                 new TeamResult(8, "Barcelona", 1, "Football")));
 

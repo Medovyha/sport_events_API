@@ -18,6 +18,9 @@ import com.sport_events.api.application.dto.command.CreateSportCommand;
 import com.sport_events.api.application.dto.command.SportTranslationCommand;
 import com.sport_events.api.application.dto.command.UpdateSportCommand;
 import com.sport_events.api.application.dto.command.UpsertSportTranslationCommand;
+import com.sport_events.api.application.dto.query.GetSportQuery;
+import com.sport_events.api.application.dto.query.GetSportsQuery;
+import com.sport_events.api.application.dto.query.GetTeamsBySportQuery;
 import com.sport_events.api.application.usecase.CreateSportUseCase;
 import com.sport_events.api.application.usecase.GetSportUseCase;
 import com.sport_events.api.application.usecase.GetTeamUseCase;
@@ -60,7 +63,7 @@ public class SportController {
     public ResponseEntity<List<SportResponse>> getAllSports(
             @RequestHeader(value = "Accept-Language", defaultValue = "en") String acceptLanguage) {
         String lang = LanguageUtils.normalizeLanguage(acceptLanguage);
-        List<SportResponse> sports = getSportUseCase.findAll(lang).stream()
+        List<SportResponse> sports = getSportUseCase.execute(new GetSportsQuery(lang)).stream()
                 .map(SportResponseMapper::toResponse)
                 .toList();
         return ResponseEntity.ok(sports);
@@ -71,7 +74,7 @@ public class SportController {
             @PathVariable Integer id,
             @RequestHeader(value = "Accept-Language", defaultValue = "en") String acceptLanguage) {
         String lang = LanguageUtils.normalizeLanguage(acceptLanguage);
-        return ResponseEntity.ok(SportResponseMapper.toResponse(getSportUseCase.findById(id, lang)));
+        return ResponseEntity.ok(SportResponseMapper.toResponse(getSportUseCase.execute(new GetSportQuery(id, lang))));
     }
 
     @GetMapping("/{id}/teams")
@@ -79,7 +82,7 @@ public class SportController {
             @PathVariable Integer id,
             @RequestHeader(value = "Accept-Language", defaultValue = "en") String acceptLanguage) {
         String lang = LanguageUtils.normalizeLanguage(acceptLanguage);
-        List<TeamResponse> teams = getTeamUseCase.findBySportId(id, lang).stream()
+        List<TeamResponse> teams = getTeamUseCase.execute(new GetTeamsBySportQuery(id, lang)).stream()
                 .map(TeamResponseMapper::toResponse)
                 .toList();
         return ResponseEntity.ok(teams);

@@ -14,6 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
 import com.sport_events.api.application.dto.result.VenueResult;
+import com.sport_events.api.application.dto.query.GetVenueQuery;
+import com.sport_events.api.application.dto.query.GetVenuesQuery;
 import com.sport_events.api.application.usecase.CreateVenueUseCase;
 import com.sport_events.api.application.usecase.GetVenueUseCase;
 import com.sport_events.api.application.usecase.UpdateVenueUseCase;
@@ -36,7 +38,7 @@ class VenueControllerTest {
 
     @Test
     void getAllVenues_returnsOkWithList() {
-        when(getVenueUseCase.findAll()).thenReturn(List.of(
+        when(getVenueUseCase.execute(any(GetVenuesQuery.class))).thenReturn(List.of(
                 new VenueResult(1, "Bernabéu", "Madrid"),
                 new VenueResult(2, "Camp Nou", "Barcelona")));
 
@@ -50,7 +52,7 @@ class VenueControllerTest {
 
     @Test
     void getVenue_returnsOkWithVenueResponse() {
-        when(getVenueUseCase.findById(1)).thenReturn(new VenueResult(1, "Bernabéu", "Madrid"));
+        when(getVenueUseCase.execute(any(GetVenueQuery.class))).thenReturn(new VenueResult(1, "Bernabéu", "Madrid"));
 
         ResponseEntity<VenueResponse> response = controller.getVenue(1);
 

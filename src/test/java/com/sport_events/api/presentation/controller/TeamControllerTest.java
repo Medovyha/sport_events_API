@@ -17,6 +17,9 @@ import org.springframework.http.ResponseEntity;
 
 import com.sport_events.api.application.dto.result.PlayerResult;
 import com.sport_events.api.application.dto.result.TeamResult;
+import com.sport_events.api.application.dto.query.GetPlayersByTeamQuery;
+import com.sport_events.api.application.dto.query.GetTeamQuery;
+import com.sport_events.api.application.dto.query.GetTeamsQuery;
 import com.sport_events.api.application.usecase.AssignPlayerToTeamUseCase;
 import com.sport_events.api.application.usecase.CreateTeamUseCase;
 import com.sport_events.api.application.usecase.GetPlayerUseCase;
@@ -50,21 +53,21 @@ class TeamControllerTest {
 
     @Test
     void getAllTeams_normalizesAcceptLanguage() {
-        when(getTeamUseCase.findAll("uk")).thenReturn(List.of(
+        when(getTeamUseCase.execute(any(GetTeamsQuery.class))).thenReturn(List.of(
                 new TeamResult(7, "Real Madrid", 1, "Футбол")));
 
         ResponseEntity<List<TeamResponse>> response = controller.getAllTeams("uk-UA,uk;q=0.9");
 
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(getTeamUseCase).findAll(captor.capture());
-        assertThat(captor.getValue()).isEqualTo("uk");
+        ArgumentCaptor<GetTeamsQuery> captor = ArgumentCaptor.forClass(GetTeamsQuery.class);
+        verify(getTeamUseCase).execute(captor.capture());
+        assertThat(captor.getValue().languageCode()).isEqualTo("uk");
         assertThat(response.getBody()).hasSize(1);
         assertThat(response.getBody().getFirst().name()).isEqualTo("Real Madrid");
     }
 
     @Test
     void getTeam_normalizesAcceptLanguageAndReturnsTeam() {
-        when(getTeamUseCase.findById(7, "en")).thenReturn(
+        when(getTeamUseCase.execute(any(GetTeamQuery.class))).thenReturn(
                 new TeamResult(7, "Real Madrid", 1, "Football"));
 
         ResponseEntity<TeamResponse> response = controller.getTeam(7, "en");
@@ -77,7 +80,7 @@ class TeamControllerTest {
 
     @Test
     void getPlayersByTeam_returnsPlayers() {
-        when(getPlayerUseCase.findByTeamId(7, "en")).thenReturn(List.of(
+        when(getPlayerUseCase.execute(any(GetPlayersByTeamQuery.class))).thenReturn(List.of(
                 new PlayerResult(100, "Carlos", "Silva", LocalDate.parse("1990-03-15"), null)));
 
         ResponseEntity<List<PlayerResponse>> response = controller.getPlayersByTeam(7, "en");
