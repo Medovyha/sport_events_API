@@ -1,19 +1,18 @@
 package com.sport_events.api.infrastructure.persistence.adapter;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.sport_events.api.infrastructure.persistence.jpa.entity.EventJpaEntity;
@@ -25,6 +24,7 @@ import com.sport_events.api.infrastructure.persistence.jpa.entity.PlayerJpaEntit
 import com.sport_events.api.infrastructure.persistence.jpa.entity.SportJpaEntity;
 import com.sport_events.api.infrastructure.persistence.jpa.entity.SportTranslationJpaEntity;
 import com.sport_events.api.infrastructure.persistence.jpa.entity.TeamJpaEntity;
+import com.sport_events.api.infrastructure.persistence.jpa.entity.TeamPlayerJpaEntity;
 import com.sport_events.api.infrastructure.persistence.jpa.entity.VenueJpaEntity;
 import com.sport_events.api.infrastructure.persistence.jpa.repository.EventJpaRepository;
 import com.sport_events.api.infrastructure.persistence.jpa.repository.EventPlayerJpaRepository;
@@ -32,8 +32,10 @@ import com.sport_events.api.infrastructure.persistence.jpa.repository.EventTeamJ
 import com.sport_events.api.infrastructure.persistence.jpa.repository.EventTranslationJpaRepository;
 import com.sport_events.api.infrastructure.persistence.jpa.repository.LanguageJpaRepository;
 import com.sport_events.api.infrastructure.persistence.jpa.repository.PlayerJpaRepository;
+import com.sport_events.api.infrastructure.persistence.jpa.repository.SportJpaRepository;
 import com.sport_events.api.infrastructure.persistence.jpa.repository.SportTranslationJpaRepository;
 import com.sport_events.api.infrastructure.persistence.jpa.repository.TeamJpaRepository;
+import com.sport_events.api.infrastructure.persistence.jpa.repository.TeamPlayerJpaRepository;
 import com.sport_events.api.infrastructure.persistence.jpa.repository.VenueJpaRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,9 +54,13 @@ class InfrastructureAdaptersTest {
     @Mock
     private PlayerJpaRepository playerJpaRepository;
     @Mock
+    private SportJpaRepository sportJpaRepository;
+    @Mock
     private SportTranslationJpaRepository sportTranslationJpaRepository;
     @Mock
     private TeamJpaRepository teamJpaRepository;
+    @Mock
+    private TeamPlayerJpaRepository teamPlayerJpaRepository;
     @Mock
     private VenueJpaRepository venueJpaRepository;
 
@@ -71,9 +77,13 @@ class InfrastructureAdaptersTest {
     @InjectMocks
     private PlayerRepositoryAdapter playerRepositoryAdapter;
     @InjectMocks
+    private SportRepositoryAdapter sportRepositoryAdapter;
+    @InjectMocks
     private SportTranslationRepositoryAdapter sportTranslationRepositoryAdapter;
     @InjectMocks
     private TeamRepositoryAdapter teamRepositoryAdapter;
+    @InjectMocks
+    private TeamPlayerRepositoryAdapter teamPlayerRepositoryAdapter;
     @InjectMocks
     private VenueRepositoryAdapter venueRepositoryAdapter;
 
@@ -301,6 +311,54 @@ class InfrastructureAdaptersTest {
         verify(venueJpaRepository).deleteById(1);
 
         assertThatThrownBy(() -> venueRepositoryAdapter.save(null))
+                .isInstanceOf(UnsupportedOperationException.class);
+    }
+
+    @Test
+    void sportAdapter_coversReadPathsDeleteAndSave() {
+        SportJpaEntity entity = new SportJpaEntity();
+        entity.setSportId(1);
+
+        when(sportJpaRepository.findById(1)).thenReturn(Optional.of(entity));
+        when(sportJpaRepository.findAll()).thenReturn(List.of(entity));
+
+        assertThat(sportRepositoryAdapter.findById(1)).isPresent();
+        assertThat(sportRepositoryAdapter.findAll()).hasSize(1);
+
+        sportRepositoryAdapter.deleteById(1);
+        verify(sportJpaRepository).deleteById(1);
+
+        assertThatThrownBy(() -> sportRepositoryAdapter.save(null))
+                .isInstanceOf(UnsupportedOperationException.class);
+    }
+
+    @Test
+    void teamPlayerAdapter_coversReadPathsDeleteAndSave() {
+        TeamPlayerJpaEntity entity = new TeamPlayerJpaEntity();
+        entity.setTeamPlayerId(1);
+        TeamJpaEntity team = new TeamJpaEntity();
+        team.setTeamId(7);
+        PlayerJpaEntity player = new PlayerJpaEntity();
+        player.setPlayerId(100);
+        entity.setTeam(team);
+        entity.setPlayer(player);
+
+        when(teamPlayerJpaRepository.findById(1)).thenReturn(Optional.of(entity));
+        when(teamPlayerJpaRepository.findAll()).thenReturn(List.of(entity));
+        when(teamPlayerJpaRepository.findByTeam_TeamId(7)).thenReturn(List.of(entity));
+        when(teamPlayerJpaRepository.findByPlayer_PlayerId(100)).thenReturn(List.of(entity));
+        when(teamPlayerJpaRepository.findByTeam_TeamIdAndPlayer_PlayerId(7, 100)).thenReturn(Optional.of(entity));
+
+        assertThat(teamPlayerRepositoryAdapter.findById(1)).isPresent();
+        assertThat(teamPlayerRepositoryAdapter.findAll()).hasSize(1);
+        assertThat(teamPlayerRepositoryAdapter.findByTeamId(7)).hasSize(1);
+        assertThat(teamPlayerRepositoryAdapter.findByPlayerId(100)).hasSize(1);
+        assertThat(teamPlayerRepositoryAdapter.findByTeamIdAndPlayerId(7, 100)).isPresent();
+
+        teamPlayerRepositoryAdapter.deleteById(1);
+        verify(teamPlayerJpaRepository).deleteById(1);
+
+        assertThatThrownBy(() -> teamPlayerRepositoryAdapter.save(null))
                 .isInstanceOf(UnsupportedOperationException.class);
     }
 }

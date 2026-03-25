@@ -13,6 +13,8 @@ public interface TeamPlayerRepository {
 
     List<TeamPlayer> findByTeamId(Integer teamId);
 
+    List<TeamPlayer> findByPlayerId(Integer playerId);
+
     Optional<TeamPlayer> findByTeamIdAndPlayerId(Integer teamId, Integer playerId);
 
     TeamPlayer save(TeamPlayer teamPlayer);
