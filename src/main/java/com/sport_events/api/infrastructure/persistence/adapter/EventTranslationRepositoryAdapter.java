@@ -54,7 +54,8 @@ public class EventTranslationRepositoryAdapter implements EventTranslationReposi
 
     @Override
     public EventTranslation save(EventTranslation eventTranslation) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        var entity = EventTranslationMapper.toEntity(eventTranslation);
+        return EventTranslationMapper.toDomain(jpaRepository.save(entity));
     }
 
     @Override

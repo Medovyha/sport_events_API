@@ -89,7 +89,7 @@ class InfrastructureAdaptersTest {
     private VenueRepositoryAdapter venueRepositoryAdapter;
 
     @Test
-    void eventAdapter_mapsFindAndDelegatesDelete_andSaveThrows() {
+    void eventAdapter_mapsFindAndDelegatesDelete_andSave() {
         EventJpaEntity event = new EventJpaEntity();
         event.setEventId(1L);
         event.setStartsAt(OffsetDateTime.parse("2026-04-05T20:00:00Z"));
@@ -105,8 +105,17 @@ class InfrastructureAdaptersTest {
         eventRepositoryAdapter.deleteById(1L);
         verify(eventJpaRepository).deleteById(1L);
 
-        assertThatThrownBy(() -> eventRepositoryAdapter.save(null))
-                .isInstanceOf(UnsupportedOperationException.class);
+        EventJpaEntity savedEvent = new EventJpaEntity();
+        savedEvent.setEventId(1L);
+        savedEvent.setStartsAt(OffsetDateTime.parse("2026-04-05T20:00:00Z"));
+        savedEvent.setVenue(venue);
+        when(eventJpaRepository.save(any())).thenReturn(savedEvent);
+
+        var saved = eventRepositoryAdapter.save(new com.sport_events.api.domain.model.Event(
+            null,
+            OffsetDateTime.parse("2026-04-05T20:00:00Z"),
+            10));
+        assertThat(saved.getEventId()).isEqualTo(1L);
     }
 
     @Test
@@ -133,8 +142,17 @@ class InfrastructureAdaptersTest {
         eventPlayerRepositoryAdapter.deleteById(1);
         verify(eventPlayerJpaRepository).deleteById(1);
 
-        assertThatThrownBy(() -> eventPlayerRepositoryAdapter.save(null))
-                .isInstanceOf(UnsupportedOperationException.class);
+        EventPlayerJpaEntity savedEntity = new EventPlayerJpaEntity();
+        savedEntity.setEventPlayersId(22);
+        savedEntity.setEventTeam(eventTeam);
+        savedEntity.setPlayer(player);
+        when(eventPlayerJpaRepository.save(any())).thenReturn(savedEntity);
+
+        var saved = eventPlayerRepositoryAdapter.save(new com.sport_events.api.domain.model.EventPlayer(
+            null,
+            11,
+            100));
+        assertThat(saved.getEventPlayersId()).isEqualTo(22);
     }
 
     @Test
@@ -161,8 +179,17 @@ class InfrastructureAdaptersTest {
         eventTeamRepositoryAdapter.deleteById(11);
         verify(eventTeamJpaRepository).deleteById(11);
 
-        assertThatThrownBy(() -> eventTeamRepositoryAdapter.save(null))
-                .isInstanceOf(UnsupportedOperationException.class);
+        EventTeamJpaEntity savedEntity = new EventTeamJpaEntity();
+        savedEntity.setEventTeamsId(12);
+        savedEntity.setEvent(event);
+        savedEntity.setTeam(team);
+        when(eventTeamJpaRepository.save(any())).thenReturn(savedEntity);
+
+        var saved = eventTeamRepositoryAdapter.save(new com.sport_events.api.domain.model.EventTeam(
+            null,
+            1L,
+            7));
+        assertThat(saved.getEventTeamsId()).isEqualTo(12);
     }
 
     @Test
@@ -193,8 +220,21 @@ class InfrastructureAdaptersTest {
         eventTranslationRepositoryAdapter.deleteById(50);
         verify(eventTranslationJpaRepository).deleteById(50);
 
-        assertThatThrownBy(() -> eventTranslationRepositoryAdapter.save(null))
-                .isInstanceOf(UnsupportedOperationException.class);
+        EventTranslationJpaEntity savedTranslation = new EventTranslationJpaEntity();
+        savedTranslation.setEventTranslationId(50);
+        savedTranslation.setName("El Clásico");
+        savedTranslation.setDescription("Desc");
+        savedTranslation.setEvent(event);
+        savedTranslation.setLanguage(language);
+        when(eventTranslationJpaRepository.save(any())).thenReturn(savedTranslation);
+
+        var saved = eventTranslationRepositoryAdapter.save(new com.sport_events.api.domain.model.EventTranslation(
+            null,
+            1L,
+            1,
+            "El Clásico",
+            "Desc"));
+        assertThat(saved.getEventTranslationId()).isEqualTo(50);
     }
 
     @Test

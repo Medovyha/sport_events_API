@@ -47,7 +47,8 @@ public class EventPlayerRepositoryAdapter implements EventPlayerRepository {
 
     @Override
     public EventPlayer save(EventPlayer eventPlayer) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        var entity = EventPlayerMapper.toEntity(eventPlayer);
+        return EventPlayerMapper.toDomain(jpaRepository.save(entity));
     }
 
     @Override
