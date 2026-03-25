@@ -282,8 +282,9 @@ class InfrastructureMappersTest {
 
     @Test
     void sportTranslationMapper_toEntity_mapsRefs() {
-        var domain = new com.sport_events.api.domain.model.SportTranslation(null, 5, 1, "Football");
+        var domain = new com.sport_events.api.domain.model.SportTranslation(31, 5, 1, "Football");
         var entity = SportTranslationMapper.toEntity(domain);
+        assertThat(entity.getSportTranslationId()).isEqualTo(31);
         assertThat(entity.getName()).isEqualTo("Football");
         assertThat(entity.getSport().getSportId()).isEqualTo(5);
         assertThat(entity.getLanguage().getLanguageId()).isEqualTo(1);

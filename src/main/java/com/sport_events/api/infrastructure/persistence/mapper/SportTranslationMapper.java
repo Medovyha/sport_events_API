@@ -17,6 +17,7 @@ public class SportTranslationMapper {
 
     public static SportTranslationJpaEntity toEntity(SportTranslation st) {
         SportTranslationJpaEntity entity = new SportTranslationJpaEntity();
+        entity.setSportTranslationId(st.getSportTranslationId());
         entity.setName(st.getName());
         if (st.getSportId() != null) {
             SportJpaEntity sport = new SportJpaEntity();
