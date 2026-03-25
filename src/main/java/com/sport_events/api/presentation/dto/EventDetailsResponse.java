@@ -3,6 +3,9 @@ package com.sport_events.api.presentation.dto;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record EventDetailsResponse(
         Long eventId,
         OffsetDateTime startsAt,
@@ -18,6 +21,7 @@ public record EventDetailsResponse(
             String address
     ) {}
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public record PlayerResponse(
             Integer playerId,
             String firstName,
@@ -25,6 +29,7 @@ public record EventDetailsResponse(
             java.time.LocalDate dateOfBirth
     ) {}
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public record EventTeamResponse(
             Integer eventTeamsId,
             Integer teamId,

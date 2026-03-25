@@ -2,8 +2,8 @@ package com.sport_events.api.presentation.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,11 +24,11 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-        public ResponseEntity<EventDetailsResponse> getEvent(
-                        @PathVariable Long id,
-                        @RequestHeader(value = "Accept-Language", defaultValue = "en") String acceptLanguage) {
-                String languageCode = acceptLanguage.split(",")[0].split(";")[0].split("-")[0].trim().toLowerCase();
-                EventResult result = getEventUseCase.execute(new GetEventQuery(id, languageCode));
+    public ResponseEntity<EventDetailsResponse> getEvent(
+            @PathVariable Long id,
+            @RequestHeader(value = "Accept-Language", defaultValue = "en") String acceptLanguage) {
+        String languageCode = acceptLanguage.split(",")[0].split(";")[0].split("-")[0].trim().toLowerCase();
+        EventResult result = getEventUseCase.execute(new GetEventQuery(id, languageCode));
         return ResponseEntity.ok(EventResponseMapper.toResponse(result));
     }
 }
