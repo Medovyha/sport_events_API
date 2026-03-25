@@ -19,6 +19,9 @@ import com.sport_events.api.application.dto.command.AssignPlayerToTeamCommand;
 import com.sport_events.api.application.dto.command.CreateTeamCommand;
 import com.sport_events.api.application.dto.command.RemovePlayerFromTeamCommand;
 import com.sport_events.api.application.dto.command.UpdateTeamCommand;
+import com.sport_events.api.application.dto.query.GetPlayersByTeamQuery;
+import com.sport_events.api.application.dto.query.GetTeamQuery;
+import com.sport_events.api.application.dto.query.GetTeamsQuery;
 import com.sport_events.api.application.usecase.AssignPlayerToTeamUseCase;
 import com.sport_events.api.application.usecase.CreateTeamUseCase;
 import com.sport_events.api.application.usecase.GetPlayerUseCase;
@@ -64,7 +67,7 @@ public class TeamController {
     public ResponseEntity<List<TeamResponse>> getAllTeams(
             @RequestHeader(value = "Accept-Language", defaultValue = "en") String acceptLanguage) {
         String lang = LanguageUtils.normalizeLanguage(acceptLanguage);
-        List<TeamResponse> teams = getTeamUseCase.findAll(lang).stream()
+        List<TeamResponse> teams = getTeamUseCase.execute(new GetTeamsQuery(lang)).stream()
                 .map(TeamResponseMapper::toResponse)
                 .toList();
         return ResponseEntity.ok(teams);
@@ -75,7 +78,7 @@ public class TeamController {
             @PathVariable Integer id,
             @RequestHeader(value = "Accept-Language", defaultValue = "en") String acceptLanguage) {
         String lang = LanguageUtils.normalizeLanguage(acceptLanguage);
-        return ResponseEntity.ok(TeamResponseMapper.toResponse(getTeamUseCase.findById(id, lang)));
+        return ResponseEntity.ok(TeamResponseMapper.toResponse(getTeamUseCase.execute(new GetTeamQuery(id, lang))));
     }
 
     @GetMapping("/{id}/players")
@@ -83,7 +86,7 @@ public class TeamController {
             @PathVariable Integer id,
             @RequestHeader(value = "Accept-Language", defaultValue = "en") String acceptLanguage) {
         String lang = LanguageUtils.normalizeLanguage(acceptLanguage);
-        List<PlayerResponse> players = getPlayerUseCase.findByTeamId(id, lang).stream()
+        List<PlayerResponse> players = getPlayerUseCase.execute(new GetPlayersByTeamQuery(id, lang)).stream()
                 .map(PlayerResponseMapper::toResponse)
                 .toList();
         return ResponseEntity.ok(players);

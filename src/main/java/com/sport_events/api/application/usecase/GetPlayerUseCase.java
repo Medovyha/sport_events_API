@@ -3,6 +3,9 @@ package com.sport_events.api.application.usecase;
 import java.util.List;
 import java.util.Optional;
 
+import com.sport_events.api.application.dto.query.GetPlayerQuery;
+import com.sport_events.api.application.dto.query.GetPlayersByTeamQuery;
+import com.sport_events.api.application.dto.query.GetPlayersQuery;
 import com.sport_events.api.application.dto.result.PlayerResult;
 import com.sport_events.api.application.dto.result.TeamResult;
 import com.sport_events.api.domain.exception.DomainException;
@@ -36,24 +39,36 @@ public class GetPlayerUseCase {
     }
 
     public PlayerResult findById(Integer playerId, String languageCode) {
-        Integer languageId = resolveLanguageId(languageCode);
-        return playerRepository.findById(playerId)
-                .map(p -> new PlayerResult(p.getPlayerId(), p.getFirstName(), p.getLastName(), p.getDateOfBirth(),
-                        resolvePlayerTeams(p.getPlayerId(), languageId)))
-                .orElseThrow(() -> new DomainException("Player not found: " + playerId));
+        return execute(new GetPlayerQuery(playerId, languageCode));
     }
 
     public List<PlayerResult> findAll(String languageCode) {
-        Integer languageId = resolveLanguageId(languageCode);
+        return execute(new GetPlayersQuery(languageCode));
+    }
+
+    public List<PlayerResult> findByTeamId(Integer teamId, String languageCode) {
+        return execute(new GetPlayersByTeamQuery(teamId, languageCode));
+    }
+
+    public PlayerResult execute(GetPlayerQuery query) {
+        Integer languageId = resolveLanguageId(query.languageCode());
+        return playerRepository.findById(query.playerId())
+                .map(p -> new PlayerResult(p.getPlayerId(), p.getFirstName(), p.getLastName(), p.getDateOfBirth(),
+                        resolvePlayerTeams(p.getPlayerId(), languageId)))
+                .orElseThrow(() -> new DomainException("Player not found: " + query.playerId()));
+    }
+
+    public List<PlayerResult> execute(GetPlayersQuery query) {
+        Integer languageId = resolveLanguageId(query.languageCode());
         return playerRepository.findAll().stream()
                 .map(p -> new PlayerResult(p.getPlayerId(), p.getFirstName(), p.getLastName(), p.getDateOfBirth(),
                         resolvePlayerTeams(p.getPlayerId(), languageId)))
                 .toList();
     }
 
-    public List<PlayerResult> findByTeamId(Integer teamId, String languageCode) {
-        Integer languageId = resolveLanguageId(languageCode);
-        return teamPlayerRepository.findByTeamId(teamId).stream()
+    public List<PlayerResult> execute(GetPlayersByTeamQuery query) {
+        Integer languageId = resolveLanguageId(query.languageCode());
+        return teamPlayerRepository.findByTeamId(query.teamId()).stream()
                 .map(TeamPlayer::getPlayerId)
                 .map(pid -> playerRepository.findById(pid)
                         .orElseThrow(() -> new DomainException("Player not found: " + pid)))

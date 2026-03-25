@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sport_events.api.application.dto.command.CreateVenueCommand;
 import com.sport_events.api.application.dto.command.UpdateVenueCommand;
+import com.sport_events.api.application.dto.query.GetVenueQuery;
+import com.sport_events.api.application.dto.query.GetVenuesQuery;
 import com.sport_events.api.application.usecase.CreateVenueUseCase;
 import com.sport_events.api.application.usecase.GetVenueUseCase;
 import com.sport_events.api.application.usecase.UpdateVenueUseCase;
@@ -43,7 +45,7 @@ public class VenueController {
 
     @GetMapping
     public ResponseEntity<List<VenueResponse>> getAllVenues() {
-        List<VenueResponse> venues = getVenueUseCase.findAll().stream()
+        List<VenueResponse> venues = getVenueUseCase.execute(new GetVenuesQuery()).stream()
                 .map(VenueResponseMapper::toResponse)
                 .toList();
         return ResponseEntity.ok(venues);
@@ -51,7 +53,7 @@ public class VenueController {
 
     @GetMapping("/{id}")
     public ResponseEntity<VenueResponse> getVenue(@PathVariable Integer id) {
-        return ResponseEntity.ok(VenueResponseMapper.toResponse(getVenueUseCase.findById(id)));
+        return ResponseEntity.ok(VenueResponseMapper.toResponse(getVenueUseCase.execute(new GetVenueQuery(id))));
     }
 
     @PostMapping

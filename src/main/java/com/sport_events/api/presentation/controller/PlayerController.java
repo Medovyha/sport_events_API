@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sport_events.api.application.dto.command.CreatePlayerCommand;
 import com.sport_events.api.application.dto.command.UpdatePlayerCommand;
+import com.sport_events.api.application.dto.query.GetPlayerQuery;
+import com.sport_events.api.application.dto.query.GetPlayersQuery;
 import com.sport_events.api.application.usecase.CreatePlayerUseCase;
 import com.sport_events.api.application.usecase.GetPlayerUseCase;
 import com.sport_events.api.application.usecase.UpdatePlayerUseCase;
@@ -47,7 +49,7 @@ public class PlayerController {
     public ResponseEntity<List<PlayerResponse>> getAllPlayers(
             @RequestHeader(value = "Accept-Language", defaultValue = "en") String acceptLanguage) {
         String lang = LanguageUtils.normalizeLanguage(acceptLanguage);
-        List<PlayerResponse> players = getPlayerUseCase.findAll(lang).stream()
+        List<PlayerResponse> players = getPlayerUseCase.execute(new GetPlayersQuery(lang)).stream()
                 .map(PlayerResponseMapper::toResponse)
                 .toList();
         return ResponseEntity.ok(players);
@@ -58,7 +60,7 @@ public class PlayerController {
             @PathVariable Integer id,
             @RequestHeader(value = "Accept-Language", defaultValue = "en") String acceptLanguage) {
         String lang = LanguageUtils.normalizeLanguage(acceptLanguage);
-        return ResponseEntity.ok(PlayerResponseMapper.toResponse(getPlayerUseCase.findById(id, lang)));
+        return ResponseEntity.ok(PlayerResponseMapper.toResponse(getPlayerUseCase.execute(new GetPlayerQuery(id, lang))));
     }
 
     @PostMapping

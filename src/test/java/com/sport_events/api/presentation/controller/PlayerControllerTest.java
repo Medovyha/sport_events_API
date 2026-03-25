@@ -15,6 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
 import com.sport_events.api.application.dto.result.PlayerResult;
+import com.sport_events.api.application.dto.query.GetPlayerQuery;
+import com.sport_events.api.application.dto.query.GetPlayersQuery;
 import com.sport_events.api.application.usecase.CreatePlayerUseCase;
 import com.sport_events.api.application.usecase.GetPlayerUseCase;
 import com.sport_events.api.application.usecase.UpdatePlayerUseCase;
@@ -37,7 +39,7 @@ class PlayerControllerTest {
 
     @Test
     void getAllPlayers_returnsOkWithList() {
-        when(getPlayerUseCase.findAll("en")).thenReturn(List.of(
+        when(getPlayerUseCase.execute(any(GetPlayersQuery.class))).thenReturn(List.of(
                 new PlayerResult(1, "Carlos", "Silva", LocalDate.parse("1990-03-15"), null),
                 new PlayerResult(2, "Alice", "Smith", LocalDate.parse("1995-06-20"), null)));
 
@@ -51,7 +53,7 @@ class PlayerControllerTest {
 
     @Test
     void getPlayer_returnsOkWithPlayerResponse() {
-        when(getPlayerUseCase.findById(1, "en")).thenReturn(
+        when(getPlayerUseCase.execute(any(GetPlayerQuery.class))).thenReturn(
                 new PlayerResult(1, "Carlos", "Silva", LocalDate.parse("1990-03-15"), null));
 
         ResponseEntity<PlayerResponse> response = controller.getPlayer(1, "en");

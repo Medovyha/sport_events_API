@@ -2,6 +2,8 @@ package com.sport_events.api.application.usecase;
 
 import java.util.List;
 
+import com.sport_events.api.application.dto.query.GetSportQuery;
+import com.sport_events.api.application.dto.query.GetSportsQuery;
 import com.sport_events.api.application.dto.result.SportResult;
 import com.sport_events.api.domain.exception.DomainException;
 import com.sport_events.api.domain.model.Language;
@@ -25,15 +27,23 @@ public class GetSportUseCase {
     }
 
     public SportResult findById(Integer sportId, String languageCode) {
-        sportRepository.findById(sportId)
-                .orElseThrow(() -> new DomainException("Sport not found: " + sportId));
-        Integer languageId = resolveLanguageId(languageCode);
-        String name = resolveSportName(sportId, languageId);
-        return new SportResult(sportId, name);
+        return execute(new GetSportQuery(sportId, languageCode));
     }
 
     public List<SportResult> findAll(String languageCode) {
-        Integer languageId = resolveLanguageId(languageCode);
+        return execute(new GetSportsQuery(languageCode));
+    }
+
+    public SportResult execute(GetSportQuery query) {
+        sportRepository.findById(query.sportId())
+                .orElseThrow(() -> new DomainException("Sport not found: " + query.sportId()));
+        Integer languageId = resolveLanguageId(query.languageCode());
+        String name = resolveSportName(query.sportId(), languageId);
+        return new SportResult(query.sportId(), name);
+    }
+
+    public List<SportResult> execute(GetSportsQuery query) {
+        Integer languageId = resolveLanguageId(query.languageCode());
         return sportRepository.findAll().stream()
                 .map(s -> new SportResult(s.getSportId(), resolveSportName(s.getSportId(), languageId)))
                 .toList();
