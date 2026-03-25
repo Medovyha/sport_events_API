@@ -9,6 +9,7 @@ on:
 permissions:
   contents: read
   pull-requests: write
+  checks: write
 
 jobs:
   build-and-test:
@@ -31,6 +32,15 @@ jobs:
 
       - name: Run tests with coverage
         run: ./mvnw -B clean test jacoco:report
+
+      - name: Publish test results
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: JUnit Test Results
+          path: target/surefire-reports/TEST-*.xml
+          reporter: java-junit
+          fail-on-error: false
 
       - name: Upload test reports
         if: always()
