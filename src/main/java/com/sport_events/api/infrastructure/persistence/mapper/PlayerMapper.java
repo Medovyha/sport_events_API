@@ -12,4 +12,12 @@ public class PlayerMapper {
                 entity.getLastName(),
                 entity.getDateOfBirth());
     }
+
+    public static PlayerJpaEntity toEntity(Player player) {
+        PlayerJpaEntity entity = new PlayerJpaEntity();
+        entity.setFirstName(player.getFirstName());
+        entity.setLastName(player.getLastName());
+        entity.setDateOfBirth(player.getDateOfBirth());
+        return entity;
+    }
 }

@@ -34,7 +34,8 @@ public class VenueRepositoryAdapter implements VenueRepository {
 
     @Override
     public Venue save(Venue venue) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        var entity = VenueMapper.toEntity(venue);
+        return VenueMapper.toDomain(jpaRepository.save(entity));
     }
 
     @Override

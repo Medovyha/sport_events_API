@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.verify;
@@ -15,8 +16,10 @@ import org.springframework.http.ResponseEntity;
 
 import com.sport_events.api.application.dto.result.SportResult;
 import com.sport_events.api.application.dto.result.TeamResult;
+import com.sport_events.api.application.usecase.CreateSportUseCase;
 import com.sport_events.api.application.usecase.GetSportUseCase;
 import com.sport_events.api.application.usecase.GetTeamUseCase;
+import com.sport_events.api.presentation.dto.CreateSportRequest;
 import com.sport_events.api.presentation.dto.SportResponse;
 import com.sport_events.api.presentation.dto.TeamResponse;
 
@@ -27,6 +30,8 @@ class SportControllerTest {
     private GetSportUseCase getSportUseCase;
     @Mock
     private GetTeamUseCase getTeamUseCase;
+    @Mock
+    private CreateSportUseCase createSportUseCase;
 
     @InjectMocks
     private SportController controller;
@@ -70,5 +75,17 @@ class SportControllerTest {
         assertThat(response.getBody()).hasSize(2);
         assertThat(response.getBody().get(0).name()).isEqualTo("Real Madrid");
         assertThat(response.getBody().get(1).name()).isEqualTo("Barcelona");
+    }
+
+    @Test
+    void createSport_returns201WithCreatedSport() {
+        when(createSportUseCase.execute(any())).thenReturn(new SportResult(5, "Football"));
+
+        ResponseEntity<SportResponse> response = controller.createSport(new CreateSportRequest("Football"), "en");
+
+        assertThat(response.getStatusCode().value()).isEqualTo(201);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().sportId()).isEqualTo(5);
+        assertThat(response.getBody().name()).isEqualTo("Football");
     }
 }

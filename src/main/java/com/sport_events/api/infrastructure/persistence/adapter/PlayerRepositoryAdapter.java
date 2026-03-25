@@ -34,7 +34,8 @@ public class PlayerRepositoryAdapter implements PlayerRepository {
 
     @Override
     public Player save(Player player) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        var entity = PlayerMapper.toEntity(player);
+        return PlayerMapper.toDomain(jpaRepository.save(entity));
     }
 
     @Override

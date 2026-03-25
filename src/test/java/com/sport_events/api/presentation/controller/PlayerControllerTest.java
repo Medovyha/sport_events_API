@@ -6,6 +6,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.when;
@@ -13,7 +14,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
 import com.sport_events.api.application.dto.result.PlayerResult;
+import com.sport_events.api.application.usecase.CreatePlayerUseCase;
 import com.sport_events.api.application.usecase.GetPlayerUseCase;
+import com.sport_events.api.presentation.dto.CreatePlayerRequest;
 import com.sport_events.api.presentation.dto.PlayerResponse;
 
 @ExtendWith(MockitoExtension.class)
@@ -21,6 +24,8 @@ class PlayerControllerTest {
 
     @Mock
     private GetPlayerUseCase getPlayerUseCase;
+    @Mock
+    private CreatePlayerUseCase createPlayerUseCase;
 
     @InjectMocks
     private PlayerController controller;
@@ -50,5 +55,19 @@ class PlayerControllerTest {
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().playerId()).isEqualTo(1);
         assertThat(response.getBody().lastName()).isEqualTo("Silva");
+    }
+
+    @Test
+    void createPlayer_returns201WithCreatedPlayer() {
+        when(createPlayerUseCase.execute(any())).thenReturn(
+                new PlayerResult(42, "Carlos", "Silva", LocalDate.parse("1990-03-15"), null));
+
+        ResponseEntity<PlayerResponse> response = controller.createPlayer(
+                new CreatePlayerRequest("Carlos", "Silva", LocalDate.parse("1990-03-15")));
+
+        assertThat(response.getStatusCode().value()).isEqualTo(201);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().playerId()).isEqualTo(42);
+        assertThat(response.getBody().firstName()).isEqualTo("Carlos");
     }
 }
