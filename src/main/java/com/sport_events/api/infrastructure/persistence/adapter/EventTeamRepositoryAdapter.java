@@ -47,7 +47,8 @@ public class EventTeamRepositoryAdapter implements EventTeamRepository {
 
     @Override
     public EventTeam save(EventTeam eventTeam) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        var entity = EventTeamMapper.toEntity(eventTeam);
+        return EventTeamMapper.toDomain(jpaRepository.save(entity));
     }
 
     @Override

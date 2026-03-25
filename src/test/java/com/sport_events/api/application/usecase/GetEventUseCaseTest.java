@@ -63,8 +63,7 @@ class GetEventUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        useCase = new GetEventUseCase(
-                eventRepository,
+        EventResultBuilder eventResultBuilder = new EventResultBuilder(
                 venueRepository,
                 eventTeamRepository,
                 eventTranslationRepository,
@@ -73,6 +72,7 @@ class GetEventUseCaseTest {
                 languageRepository,
                 teamRepository,
                 sportTranslationRepository);
+        useCase = new GetEventUseCase(eventRepository, eventResultBuilder);
     }
 
     @Test

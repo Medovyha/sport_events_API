@@ -3,20 +3,34 @@ package com.sport_events.api.infrastructure.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.sport_events.api.application.usecase.AddPlayerToEventTeamUseCase;
+import com.sport_events.api.application.usecase.AddTeamToEventUseCase;
 import com.sport_events.api.application.usecase.AssignPlayerToTeamUseCase;
+import com.sport_events.api.application.usecase.CreateEventUseCase;
 import com.sport_events.api.application.usecase.CreatePlayerUseCase;
 import com.sport_events.api.application.usecase.CreateSportUseCase;
 import com.sport_events.api.application.usecase.CreateTeamUseCase;
 import com.sport_events.api.application.usecase.CreateVenueUseCase;
-import com.sport_events.api.application.usecase.RemovePlayerFromTeamUseCase;
-import com.sport_events.api.application.usecase.UpdatePlayerUseCase;
-import com.sport_events.api.application.usecase.UpdateTeamUseCase;
-import com.sport_events.api.application.usecase.UpdateVenueUseCase;
+import com.sport_events.api.application.usecase.DeleteEventUseCase;
+import com.sport_events.api.application.usecase.EventResultBuilder;
+import com.sport_events.api.application.usecase.GetAllEventsUseCase;
 import com.sport_events.api.application.usecase.GetEventUseCase;
+import com.sport_events.api.application.usecase.GetFutureEventsUseCase;
 import com.sport_events.api.application.usecase.GetPlayerUseCase;
+import com.sport_events.api.application.usecase.GetPreviousEventsUseCase;
 import com.sport_events.api.application.usecase.GetSportUseCase;
 import com.sport_events.api.application.usecase.GetTeamUseCase;
 import com.sport_events.api.application.usecase.GetVenueUseCase;
+import com.sport_events.api.application.usecase.RemovePlayerFromEventTeamUseCase;
+import com.sport_events.api.application.usecase.RemovePlayerFromTeamUseCase;
+import com.sport_events.api.application.usecase.RemoveTeamFromEventUseCase;
+import com.sport_events.api.application.usecase.UpdateEventTeamPlayersUseCase;
+import com.sport_events.api.application.usecase.UpdateEventUseCase;
+import com.sport_events.api.application.usecase.UpdatePlayerUseCase;
+import com.sport_events.api.application.usecase.UpdateSportUseCase;
+import com.sport_events.api.application.usecase.UpdateTeamUseCase;
+import com.sport_events.api.application.usecase.UpdateVenueUseCase;
+import com.sport_events.api.application.usecase.UpsertSportTranslationUseCase;
 import com.sport_events.api.domain.repository.EventPlayerRepository;
 import com.sport_events.api.domain.repository.EventRepository;
 import com.sport_events.api.domain.repository.EventTeamRepository;
@@ -28,15 +42,12 @@ import com.sport_events.api.domain.repository.SportTranslationRepository;
 import com.sport_events.api.domain.repository.TeamPlayerRepository;
 import com.sport_events.api.domain.repository.TeamRepository;
 import com.sport_events.api.domain.repository.VenueRepository;
-import com.sport_events.api.application.usecase.UpdateSportUseCase;
-import com.sport_events.api.application.usecase.UpsertSportTranslationUseCase;
 
 @Configuration
 public class UseCaseConfig {
 
     @Bean
-    public GetEventUseCase getEventUseCase(
-            EventRepository eventRepository,
+    public EventResultBuilder eventResultBuilder(
             VenueRepository venueRepository,
             EventTeamRepository eventTeamRepository,
             EventTranslationRepository eventTranslationRepository,
@@ -45,9 +56,37 @@ public class UseCaseConfig {
             LanguageRepository languageRepository,
             TeamRepository teamRepository,
             SportTranslationRepository sportTranslationRepository) {
-        return new GetEventUseCase(eventRepository, venueRepository, eventTeamRepository,
-                eventTranslationRepository, eventPlayerRepository, playerRepository, languageRepository,
-                teamRepository, sportTranslationRepository);
+        return new EventResultBuilder(venueRepository, eventTeamRepository, eventTranslationRepository,
+                eventPlayerRepository, playerRepository, languageRepository, teamRepository,
+                sportTranslationRepository);
+    }
+
+    @Bean
+    public GetEventUseCase getEventUseCase(
+            EventRepository eventRepository,
+            EventResultBuilder eventResultBuilder) {
+        return new GetEventUseCase(eventRepository, eventResultBuilder);
+    }
+
+    @Bean
+    public GetAllEventsUseCase getAllEventsUseCase(
+            EventRepository eventRepository,
+            EventResultBuilder eventResultBuilder) {
+        return new GetAllEventsUseCase(eventRepository, eventResultBuilder);
+    }
+
+    @Bean
+    public GetPreviousEventsUseCase getPreviousEventsUseCase(
+            EventRepository eventRepository,
+            EventResultBuilder eventResultBuilder) {
+        return new GetPreviousEventsUseCase(eventRepository, eventResultBuilder);
+    }
+
+    @Bean
+    public GetFutureEventsUseCase getFutureEventsUseCase(
+            EventRepository eventRepository,
+            EventResultBuilder eventResultBuilder) {
+        return new GetFutureEventsUseCase(eventRepository, eventResultBuilder);
     }
 
     @Bean
@@ -148,5 +187,91 @@ public class UseCaseConfig {
     @Bean
     public RemovePlayerFromTeamUseCase removePlayerFromTeamUseCase(TeamPlayerRepository teamPlayerRepository) {
         return new RemovePlayerFromTeamUseCase(teamPlayerRepository);
+    }
+
+    @Bean
+    public CreateEventUseCase createEventUseCase(
+            EventRepository eventRepository,
+            EventTranslationRepository eventTranslationRepository,
+            LanguageRepository languageRepository,
+            VenueRepository venueRepository) {
+        return new CreateEventUseCase(eventRepository, eventTranslationRepository, languageRepository, venueRepository);
+    }
+
+    @Bean
+    public UpdateEventUseCase updateEventUseCase(
+            EventRepository eventRepository,
+            EventTranslationRepository eventTranslationRepository,
+            LanguageRepository languageRepository,
+            VenueRepository venueRepository) {
+        return new UpdateEventUseCase(eventRepository, eventTranslationRepository, languageRepository, venueRepository);
+    }
+
+    @Bean
+    public AddTeamToEventUseCase addTeamToEventUseCase(
+            EventRepository eventRepository,
+            TeamRepository teamRepository,
+            EventTeamRepository eventTeamRepository) {
+        return new AddTeamToEventUseCase(eventRepository, teamRepository, eventTeamRepository);
+    }
+
+    @Bean
+    public AddPlayerToEventTeamUseCase addPlayerToEventTeamUseCase(
+            EventRepository eventRepository,
+            TeamRepository teamRepository,
+            PlayerRepository playerRepository,
+            TeamPlayerRepository teamPlayerRepository,
+            EventTeamRepository eventTeamRepository,
+            EventPlayerRepository eventPlayerRepository) {
+        return new AddPlayerToEventTeamUseCase(
+                eventRepository,
+                teamRepository,
+                playerRepository,
+                teamPlayerRepository,
+                eventTeamRepository,
+                eventPlayerRepository);
+    }
+
+    @Bean
+    public UpdateEventTeamPlayersUseCase updateEventTeamPlayersUseCase(
+            EventRepository eventRepository,
+            TeamRepository teamRepository,
+            PlayerRepository playerRepository,
+            TeamPlayerRepository teamPlayerRepository,
+            EventTeamRepository eventTeamRepository,
+            EventPlayerRepository eventPlayerRepository) {
+        return new UpdateEventTeamPlayersUseCase(
+                eventRepository,
+                teamRepository,
+                playerRepository,
+                teamPlayerRepository,
+                eventTeamRepository,
+                eventPlayerRepository);
+    }
+
+    @Bean
+    public RemovePlayerFromEventTeamUseCase removePlayerFromEventTeamUseCase(
+            EventRepository eventRepository,
+            TeamRepository teamRepository,
+            EventTeamRepository eventTeamRepository,
+            EventPlayerRepository eventPlayerRepository) {
+        return new RemovePlayerFromEventTeamUseCase(
+                eventRepository,
+                teamRepository,
+                eventTeamRepository,
+                eventPlayerRepository);
+    }
+
+    @Bean
+    public DeleteEventUseCase deleteEventUseCase(EventRepository eventRepository) {
+        return new DeleteEventUseCase(eventRepository);
+    }
+
+    @Bean
+    public RemoveTeamFromEventUseCase removeTeamFromEventUseCase(
+            EventRepository eventRepository,
+            TeamRepository teamRepository,
+            EventTeamRepository eventTeamRepository) {
+        return new RemoveTeamFromEventUseCase(eventRepository, teamRepository, eventTeamRepository);
     }
 }

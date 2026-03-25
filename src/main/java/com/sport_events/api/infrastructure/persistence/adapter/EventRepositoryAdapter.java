@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.sport_events.api.domain.model.Event;
 import com.sport_events.api.domain.repository.EventRepository;
+import com.sport_events.api.infrastructure.persistence.jpa.entity.VenueJpaEntity;
 import com.sport_events.api.infrastructure.persistence.jpa.repository.EventJpaRepository;
 import com.sport_events.api.infrastructure.persistence.mapper.EventMapper;
 
@@ -34,7 +35,10 @@ public class EventRepositoryAdapter implements EventRepository {
 
     @Override
     public Event save(Event event) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        VenueJpaEntity venue = new VenueJpaEntity();
+        venue.setVenueId(event.getVenueId());
+        var entity = EventMapper.toEntity(event, venue);
+        return EventMapper.toDomain(jpaRepository.save(entity));
     }
 
     @Override

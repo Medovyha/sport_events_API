@@ -92,6 +92,13 @@ class InfrastructureMappersTest {
         var withNulls = EventTeamMapper.toDomain(entity);
         assertThat(withNulls.getEventId()).isNull();
         assertThat(withNulls.getTeamId()).isNull();
+
+        var toEntity = EventTeamMapper.toEntity(new com.sport_events.api.domain.model.EventTeam(12, 100L, 7));
+        assertThat(toEntity.getEventTeamsId()).isEqualTo(12);
+        assertThat(toEntity.getEvent()).isNotNull();
+        assertThat(toEntity.getEvent().getEventId()).isEqualTo(100L);
+        assertThat(toEntity.getTeam()).isNotNull();
+        assertThat(toEntity.getTeam().getTeamId()).isEqualTo(7);
     }
 
     @Test
@@ -114,6 +121,13 @@ class InfrastructureMappersTest {
         var withNulls = EventPlayerMapper.toDomain(entity);
         assertThat(withNulls.getEventTeamId()).isNull();
         assertThat(withNulls.getPlayerId()).isNull();
+
+        var toEntity = EventPlayerMapper.toEntity(new com.sport_events.api.domain.model.EventPlayer(21, 11, 100));
+        assertThat(toEntity.getEventPlayersId()).isEqualTo(21);
+        assertThat(toEntity.getEventTeam()).isNotNull();
+        assertThat(toEntity.getEventTeam().getEventTeamsId()).isEqualTo(11);
+        assertThat(toEntity.getPlayer()).isNotNull();
+        assertThat(toEntity.getPlayer().getPlayerId()).isEqualTo(100);
     }
 
     @Test
