@@ -84,6 +84,25 @@ Accept-Language: pl
 
 If translation is missing, API falls back to English.
 
+## 📘 Swagger / OpenAPI
+
+This project includes Springdoc OpenAPI UI.
+
+- Swagger UI: http://localhost:8080/swagger-ui/index.html
+- OpenAPI JSON: http://localhost:8080/v3/api-docs
+
+You can use Swagger UI to:
+
+- browse all endpoints
+- inspect request/response schemas
+- test endpoints directly from browser
+
+For localized responses in Swagger, add header:
+
+```http
+Accept-Language: en|pl|uk
+```
+
 ## 🧱 Database files: schema.sql and data.sql
 
 - [src/main/resources/db/schema.sql](src/main/resources/db/schema.sql)
