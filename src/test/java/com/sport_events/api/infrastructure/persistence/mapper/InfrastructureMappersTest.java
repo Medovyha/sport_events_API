@@ -238,4 +238,54 @@ class InfrastructureMappersTest {
         assertThat(withNulls.getTeamId()).isNull();
         assertThat(withNulls.getPlayerId()).isNull();
     }
+
+    @Test
+    void playerMapper_toEntity_mapsFields() {
+        var domain = new com.sport_events.api.domain.model.Player(null, "Alice", "Smith", LocalDate.parse("1995-06-20"));
+        var entity = PlayerMapper.toEntity(domain);
+        assertThat(entity.getFirstName()).isEqualTo("Alice");
+        assertThat(entity.getLastName()).isEqualTo("Smith");
+        assertThat(entity.getDateOfBirth()).isEqualTo(LocalDate.parse("1995-06-20"));
+    }
+
+    @Test
+    void teamMapper_toEntity_mapsNameAndSportRef() {
+        var domain = new com.sport_events.api.domain.model.Team(null, "Barcelona", 2);
+        var entity = TeamMapper.toEntity(domain);
+        assertThat(entity.getName()).isEqualTo("Barcelona");
+        assertThat(entity.getSport()).isNotNull();
+        assertThat(entity.getSport().getSportId()).isEqualTo(2);
+    }
+
+    @Test
+    void sportMapper_toEntity_returnsEntity() {
+        var domain = new com.sport_events.api.domain.model.Sport(null);
+        var entity = SportMapper.toEntity(domain);
+        assertThat(entity).isNotNull();
+    }
+
+    @Test
+    void sportTranslationMapper_toEntity_mapsRefs() {
+        var domain = new com.sport_events.api.domain.model.SportTranslation(null, 5, 1, "Football");
+        var entity = SportTranslationMapper.toEntity(domain);
+        assertThat(entity.getName()).isEqualTo("Football");
+        assertThat(entity.getSport().getSportId()).isEqualTo(5);
+        assertThat(entity.getLanguage().getLanguageId()).isEqualTo(1);
+    }
+
+    @Test
+    void teamPlayerMapper_toEntity_mapsRefs() {
+        var domain = new com.sport_events.api.domain.model.TeamPlayer(null, 7, 100);
+        var entity = TeamPlayerMapper.toEntity(domain);
+        assertThat(entity.getTeam().getTeamId()).isEqualTo(7);
+        assertThat(entity.getPlayer().getPlayerId()).isEqualTo(100);
+    }
+
+    @Test
+    void venueMapper_toEntity_mapsAllFields() {
+        var domain = new com.sport_events.api.domain.model.Venue(null, "Wembley", "London");
+        var entity = VenueMapper.toEntity(domain);
+        assertThat(entity.getName()).isEqualTo("Wembley");
+        assertThat(entity.getAddress()).isEqualTo("London");
+    }
 }

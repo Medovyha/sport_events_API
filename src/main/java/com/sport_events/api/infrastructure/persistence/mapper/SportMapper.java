@@ -8,4 +8,9 @@ public class SportMapper {
     public static Sport toDomain(SportJpaEntity entity) {
         return new Sport(entity.getSportId());
     }
+
+    public static SportJpaEntity toEntity(Sport sport) {
+        SportJpaEntity entity = new SportJpaEntity();
+        return entity;
+    }
 }

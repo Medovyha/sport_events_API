@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.verify;
@@ -16,8 +17,12 @@ import org.springframework.http.ResponseEntity;
 
 import com.sport_events.api.application.dto.result.PlayerResult;
 import com.sport_events.api.application.dto.result.TeamResult;
+import com.sport_events.api.application.usecase.AssignPlayerToTeamUseCase;
+import com.sport_events.api.application.usecase.CreateTeamUseCase;
 import com.sport_events.api.application.usecase.GetPlayerUseCase;
 import com.sport_events.api.application.usecase.GetTeamUseCase;
+import com.sport_events.api.presentation.dto.AssignPlayerRequest;
+import com.sport_events.api.presentation.dto.CreateTeamRequest;
 import com.sport_events.api.presentation.dto.PlayerResponse;
 import com.sport_events.api.presentation.dto.TeamResponse;
 
@@ -28,6 +33,10 @@ class TeamControllerTest {
     private GetTeamUseCase getTeamUseCase;
     @Mock
     private GetPlayerUseCase getPlayerUseCase;
+    @Mock
+    private CreateTeamUseCase createTeamUseCase;
+    @Mock
+    private AssignPlayerToTeamUseCase assignPlayerToTeamUseCase;
 
     @InjectMocks
     private TeamController controller;
@@ -69,5 +78,25 @@ class TeamControllerTest {
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody()).hasSize(1);
         assertThat(response.getBody().getFirst().firstName()).isEqualTo("Carlos");
+    }
+
+    @Test
+    void createTeam_returns201WithCreatedTeam() {
+        when(createTeamUseCase.execute(any())).thenReturn(new TeamResult(10, "Real Madrid", 1, null));
+
+        ResponseEntity<TeamResponse> response = controller.createTeam(new CreateTeamRequest("Real Madrid", 1));
+
+        assertThat(response.getStatusCode().value()).isEqualTo(201);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().teamId()).isEqualTo(10);
+        assertThat(response.getBody().name()).isEqualTo("Real Madrid");
+    }
+
+    @Test
+    void assignPlayer_returns204() {
+        ResponseEntity<Void> response = controller.assignPlayer(7, new AssignPlayerRequest(100));
+
+        assertThat(response.getStatusCode().value()).isEqualTo(204);
+        verify(assignPlayerToTeamUseCase).execute(any());
     }
 }

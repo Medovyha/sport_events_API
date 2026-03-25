@@ -34,7 +34,8 @@ public class SportRepositoryAdapter implements SportRepository {
 
     @Override
     public Sport save(Sport sport) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        var entity = SportMapper.toEntity(sport);
+        return SportMapper.toDomain(jpaRepository.save(entity));
     }
 
     @Override

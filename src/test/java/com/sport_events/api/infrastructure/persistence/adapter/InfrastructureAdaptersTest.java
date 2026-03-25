@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.verify;
@@ -235,8 +236,15 @@ class InfrastructureAdaptersTest {
         playerRepositoryAdapter.deleteById(100);
         verify(playerJpaRepository).deleteById(100);
 
-        assertThatThrownBy(() -> playerRepositoryAdapter.save(null))
-                .isInstanceOf(UnsupportedOperationException.class);
+        PlayerJpaEntity savedEntity = new PlayerJpaEntity();
+        savedEntity.setPlayerId(100);
+        savedEntity.setFirstName("Carlos");
+        savedEntity.setLastName("Silva");
+        savedEntity.setDateOfBirth(LocalDate.parse("1990-03-15"));
+        when(playerJpaRepository.save(any())).thenReturn(savedEntity);
+        var player = new com.sport_events.api.domain.model.Player(null, "Carlos", "Silva", LocalDate.parse("1990-03-15"));
+        var saved = playerRepositoryAdapter.save(player);
+        assertThat(saved.getFirstName()).isEqualTo("Carlos");
     }
 
     @Test
@@ -266,8 +274,15 @@ class InfrastructureAdaptersTest {
         sportTranslationRepositoryAdapter.deleteById(31);
         verify(sportTranslationJpaRepository).deleteById(31);
 
-        assertThatThrownBy(() -> sportTranslationRepositoryAdapter.save(null))
-                .isInstanceOf(UnsupportedOperationException.class);
+        SportTranslationJpaEntity savedSt = new SportTranslationJpaEntity();
+        savedSt.setSportTranslationId(31);
+        savedSt.setName("Football");
+        savedSt.setSport(sport);
+        savedSt.setLanguage(language);
+        when(sportTranslationJpaRepository.save(any())).thenReturn(savedSt);
+        var st = new com.sport_events.api.domain.model.SportTranslation(null, 1, 1, "Football");
+        var savedResult = sportTranslationRepositoryAdapter.save(st);
+        assertThat(savedResult.getName()).isEqualTo("Football");
     }
 
     @Test
@@ -290,8 +305,14 @@ class InfrastructureAdaptersTest {
         teamRepositoryAdapter.deleteById(7);
         verify(teamJpaRepository).deleteById(7);
 
-        assertThatThrownBy(() -> teamRepositoryAdapter.save(null))
-                .isInstanceOf(UnsupportedOperationException.class);
+        TeamJpaEntity savedTeam = new TeamJpaEntity();
+        savedTeam.setTeamId(7);
+        savedTeam.setName("Real Madrid");
+        savedTeam.setSport(sport);
+        when(teamJpaRepository.save(any())).thenReturn(savedTeam);
+        var teamDomain = new com.sport_events.api.domain.model.Team(null, "Real Madrid", 1);
+        var savedTeamResult = teamRepositoryAdapter.save(teamDomain);
+        assertThat(savedTeamResult.getName()).isEqualTo("Real Madrid");
     }
 
     @Test
@@ -310,8 +331,14 @@ class InfrastructureAdaptersTest {
         venueRepositoryAdapter.deleteById(1);
         verify(venueJpaRepository).deleteById(1);
 
-        assertThatThrownBy(() -> venueRepositoryAdapter.save(null))
-                .isInstanceOf(UnsupportedOperationException.class);
+        VenueJpaEntity savedVenue = new VenueJpaEntity();
+        savedVenue.setVenueId(1);
+        savedVenue.setName("Arena");
+        savedVenue.setAddress("Address");
+        when(venueJpaRepository.save(any())).thenReturn(savedVenue);
+        var venueDomain = new com.sport_events.api.domain.model.Venue(null, "Arena", "Address");
+        var savedVenueResult = venueRepositoryAdapter.save(venueDomain);
+        assertThat(savedVenueResult.getName()).isEqualTo("Arena");
     }
 
     @Test
@@ -328,8 +355,11 @@ class InfrastructureAdaptersTest {
         sportRepositoryAdapter.deleteById(1);
         verify(sportJpaRepository).deleteById(1);
 
-        assertThatThrownBy(() -> sportRepositoryAdapter.save(null))
-                .isInstanceOf(UnsupportedOperationException.class);
+        SportJpaEntity savedSport = new SportJpaEntity();
+        savedSport.setSportId(1);
+        when(sportJpaRepository.save(any())).thenReturn(savedSport);
+        var savedSportResult = sportRepositoryAdapter.save(new com.sport_events.api.domain.model.Sport(null));
+        assertThat(savedSportResult).isNotNull();
     }
 
     @Test
@@ -358,7 +388,13 @@ class InfrastructureAdaptersTest {
         teamPlayerRepositoryAdapter.deleteById(1);
         verify(teamPlayerJpaRepository).deleteById(1);
 
-        assertThatThrownBy(() -> teamPlayerRepositoryAdapter.save(null))
-                .isInstanceOf(UnsupportedOperationException.class);
+        TeamPlayerJpaEntity savedTp = new TeamPlayerJpaEntity();
+        savedTp.setTeamPlayerId(1);
+        savedTp.setTeam(team);
+        savedTp.setPlayer(player);
+        when(teamPlayerJpaRepository.save(any())).thenReturn(savedTp);
+        var tp = new com.sport_events.api.domain.model.TeamPlayer(null, 7, 100);
+        var savedTpResult = teamPlayerRepositoryAdapter.save(tp);
+        assertThat(savedTpResult.getTeamId()).isEqualTo(7);
     }
 }

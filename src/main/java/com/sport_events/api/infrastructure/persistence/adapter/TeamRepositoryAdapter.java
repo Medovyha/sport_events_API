@@ -41,7 +41,8 @@ public class TeamRepositoryAdapter implements TeamRepository {
 
     @Override
     public Team save(Team team) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        var entity = TeamMapper.toEntity(team);
+        return TeamMapper.toDomain(jpaRepository.save(entity));
     }
 
     @Override

@@ -3,6 +3,11 @@ package com.sport_events.api.infrastructure.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.sport_events.api.application.usecase.AssignPlayerToTeamUseCase;
+import com.sport_events.api.application.usecase.CreatePlayerUseCase;
+import com.sport_events.api.application.usecase.CreateSportUseCase;
+import com.sport_events.api.application.usecase.CreateTeamUseCase;
+import com.sport_events.api.application.usecase.CreateVenueUseCase;
 import com.sport_events.api.application.usecase.GetEventUseCase;
 import com.sport_events.api.application.usecase.GetPlayerUseCase;
 import com.sport_events.api.application.usecase.GetSportUseCase;
@@ -69,5 +74,38 @@ public class UseCaseConfig {
             SportTranslationRepository sportTranslationRepository,
             LanguageRepository languageRepository) {
         return new GetSportUseCase(sportRepository, sportTranslationRepository, languageRepository);
+    }
+
+    @Bean
+    public CreatePlayerUseCase createPlayerUseCase(PlayerRepository playerRepository) {
+        return new CreatePlayerUseCase(playerRepository);
+    }
+
+    @Bean
+    public CreateTeamUseCase createTeamUseCase(
+            TeamRepository teamRepository,
+            SportRepository sportRepository) {
+        return new CreateTeamUseCase(teamRepository, sportRepository);
+    }
+
+    @Bean
+    public CreateSportUseCase createSportUseCase(
+            SportRepository sportRepository,
+            SportTranslationRepository sportTranslationRepository,
+            LanguageRepository languageRepository) {
+        return new CreateSportUseCase(sportRepository, sportTranslationRepository, languageRepository);
+    }
+
+    @Bean
+    public AssignPlayerToTeamUseCase assignPlayerToTeamUseCase(
+            TeamPlayerRepository teamPlayerRepository,
+            TeamRepository teamRepository,
+            PlayerRepository playerRepository) {
+        return new AssignPlayerToTeamUseCase(teamPlayerRepository, teamRepository, playerRepository);
+    }
+
+    @Bean
+    public CreateVenueUseCase createVenueUseCase(VenueRepository venueRepository) {
+        return new CreateVenueUseCase(venueRepository);
     }
 }
