@@ -15,6 +15,7 @@ public class TeamMapper {
 
     public static TeamJpaEntity toEntity(Team team) {
         TeamJpaEntity entity = new TeamJpaEntity();
+        entity.setTeamId(team.getTeamId());
         entity.setName(team.getName());
         if (team.getSportId() != null) {
             SportJpaEntity sport = new SportJpaEntity();

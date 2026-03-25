@@ -241,8 +241,9 @@ class InfrastructureMappersTest {
 
     @Test
     void playerMapper_toEntity_mapsFields() {
-        var domain = new com.sport_events.api.domain.model.Player(null, "Alice", "Smith", LocalDate.parse("1995-06-20"));
+        var domain = new com.sport_events.api.domain.model.Player(10, "Alice", "Smith", LocalDate.parse("1995-06-20"));
         var entity = PlayerMapper.toEntity(domain);
+        assertThat(entity.getPlayerId()).isEqualTo(10);
         assertThat(entity.getFirstName()).isEqualTo("Alice");
         assertThat(entity.getLastName()).isEqualTo("Smith");
         assertThat(entity.getDateOfBirth()).isEqualTo(LocalDate.parse("1995-06-20"));
@@ -250,8 +251,9 @@ class InfrastructureMappersTest {
 
     @Test
     void teamMapper_toEntity_mapsNameAndSportRef() {
-        var domain = new com.sport_events.api.domain.model.Team(null, "Barcelona", 2);
+        var domain = new com.sport_events.api.domain.model.Team(20, "Barcelona", 2);
         var entity = TeamMapper.toEntity(domain);
+        assertThat(entity.getTeamId()).isEqualTo(20);
         assertThat(entity.getName()).isEqualTo("Barcelona");
         assertThat(entity.getSport()).isNotNull();
         assertThat(entity.getSport().getSportId()).isEqualTo(2);

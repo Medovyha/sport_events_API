@@ -8,6 +8,10 @@ import com.sport_events.api.application.usecase.CreatePlayerUseCase;
 import com.sport_events.api.application.usecase.CreateSportUseCase;
 import com.sport_events.api.application.usecase.CreateTeamUseCase;
 import com.sport_events.api.application.usecase.CreateVenueUseCase;
+import com.sport_events.api.application.usecase.RemovePlayerFromTeamUseCase;
+import com.sport_events.api.application.usecase.UpdatePlayerUseCase;
+import com.sport_events.api.application.usecase.UpdateTeamUseCase;
+import com.sport_events.api.application.usecase.UpdateVenueUseCase;
 import com.sport_events.api.application.usecase.GetEventUseCase;
 import com.sport_events.api.application.usecase.GetPlayerUseCase;
 import com.sport_events.api.application.usecase.GetSportUseCase;
@@ -107,5 +111,27 @@ public class UseCaseConfig {
     @Bean
     public CreateVenueUseCase createVenueUseCase(VenueRepository venueRepository) {
         return new CreateVenueUseCase(venueRepository);
+    }
+
+    @Bean
+    public UpdatePlayerUseCase updatePlayerUseCase(PlayerRepository playerRepository) {
+        return new UpdatePlayerUseCase(playerRepository);
+    }
+
+    @Bean
+    public UpdateTeamUseCase updateTeamUseCase(
+            TeamRepository teamRepository,
+            SportRepository sportRepository) {
+        return new UpdateTeamUseCase(teamRepository, sportRepository);
+    }
+
+    @Bean
+    public UpdateVenueUseCase updateVenueUseCase(VenueRepository venueRepository) {
+        return new UpdateVenueUseCase(venueRepository);
+    }
+
+    @Bean
+    public RemovePlayerFromTeamUseCase removePlayerFromTeamUseCase(TeamPlayerRepository teamPlayerRepository) {
+        return new RemovePlayerFromTeamUseCase(teamPlayerRepository);
     }
 }
