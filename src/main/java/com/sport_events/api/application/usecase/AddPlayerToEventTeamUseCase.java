@@ -64,10 +64,6 @@ public class AddPlayerToEventTeamUseCase {
                         playerRepository.findById(playerId)
                                         .orElseThrow(() -> new DomainException("Player not found: " + playerId));
 
-                        if (teamPlayerRepository.findByTeamIdAndPlayerId(command.teamId(), playerId).isEmpty()) {
-                                throw new DomainException("Player " + playerId + " is not assigned to team " + command.teamId());
-                        }
-
                         if (eventPlayerRepository.findByEventTeamIdAndPlayerId(eventTeam.getEventTeamsId(), playerId).isPresent()) {
                                 throw new DomainException("Player " + playerId + " is already added to team "
                                                 + command.teamId() + " in event " + command.eventId());
